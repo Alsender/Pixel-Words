@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>PIXEL WORDS</title>
+        <link rel="stylesheet" href="style.css">
+        <script type="text/javascript" src="colors.js"></script>
+        <script type="text/javascript" src="pixelwords.js"></script>
+    </head>
+    <body>
+        <main class="container" id="container">
+            <section class="canvas" id="canvas"></section>
+            <aside class="holder" id="holder">
+                <div class="palette" id="palette"></div>
+                <input type="text" class="input"></input>
+            </aside>
+        </main>
+        <script>
+            const canvas  = document.getElementById('canvas')
+            const palette = document.getElementById('palette')
+            var chosenColor
+
+            for (i = 0; i < 32*32; i++) {
+                pixel = document.createElement('div')
+                canvas.appendChild(pixel)
+                pixel.setAttribute('class', 'pixel')
+                pixel.id = i
+                pixel.onclick = function() {paint(event.target)}
+                pixel.oncontextmenu = function() {paint2nd(event.target);return false}
+            }
+
+            for (i = 0; i < 64; i++) {
+                color = document.createElement("button")
+                palette.appendChild(color)
+                color.setAttribute("class", "button")
+                color.style.backgroundColor = crayola[i]
+                color.id = "color" + i
+                color.onclick = function() {chooseColor(event.target)}
+                color.oncontextmenu = function() {choose2ndColor(event.target);return false}
+            }
+            document.addEventListener('keyup', function() {confirm()})
+        </script>
+    </body>
+</html>

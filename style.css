@@ -1,0 +1,64 @@
+.container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.canvas {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    gap: 0px 0px;
+    grid-auto-flow: row;
+    height: 95vh;
+    width: 95vh;
+    background-color: floralwhite;
+    border: 5px solid darkslategray;
+}
+
+.holder {
+    align-self: center;
+    margin-left: 10%;
+}
+
+.palette {
+    height: 33vh;
+    width: 33vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    gap: 0px 0px;
+    grid-auto-flow: row;
+}
+
+.button {
+    border: 1px solid darkslategray;
+}
+
+.pixel {
+    border: 1px solid black
+}
+
+.input {
+    margin-top: 10%;
+    justify-self: center;
+    width: 33vh;
+    height: 5vh;
+}
+
+.pixel:hover {
+    outline: 2px solid red;
+    z-index: 10;
+}
+
+.button:hover {
+    outline: 4px solid blue;
+    z-index: 10;
+}
+
+.activeColor {
+    outline: 4px solid blue;
+    z-index: 10;
+}
+.active2ndColor {
+    outline: 4px solid yellow;
+    z-index: 10;
+}
