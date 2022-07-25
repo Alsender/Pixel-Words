@@ -3,20 +3,23 @@
     <head>
         <title>PIXEL WORDS</title>
         <link rel="stylesheet" href="style.css">
-        <script type="text/javascript" src="colors.js"></script>
-        <script type="text/javascript" src="pixelwords.js"></script>
+        <script type="text/javascript" src="colors.js" charset="utf-8"></script>
+        <script type="text/javascript" src="german.js" charset="utf-8"></script>
+        <script type="text/javascript" src="pixelwords.js" charset="utf-8"></script>
     </head>
     <body>
         <main class="container" id="container">
             <section class="canvas" id="canvas"></section>
             <aside class="holder" id="holder">
                 <div class="palette" id="palette"></div>
-                <input type="text" class="input"></input>
+                <div class="verbBox" id="verbBox"></div>
+                <input type="text" class="textBox" id="textBox"></input>
             </aside>
         </main>
         <script>
             const canvas  = document.getElementById('canvas')
             const palette = document.getElementById('palette')
+            const textBox = document.getElementById('textBox')
             var chosenColor
 
             for (i = 0; i < 32*32; i++) {
@@ -25,7 +28,7 @@
                 pixel.setAttribute('class', 'pixel')
                 pixel.id = i
                 pixel.onclick = function() {paint(event.target)}
-                pixel.oncontextmenu = function() {paint2nd(event.target);return false}
+                pixel.oncontextmenu = function() {remove(event.target); return false}
             }
 
             for (i = 0; i < 64; i++) {
@@ -35,9 +38,8 @@
                 color.style.backgroundColor = crayola[i]
                 color.id = "color" + i
                 color.onclick = function() {chooseColor(event.target)}
-                color.oncontextmenu = function() {choose2ndColor(event.target);return false}
             }
-            document.addEventListener('keyup', function() {confirm()})
+            document.addEventListener('keyup', function() {keyup(event)})
         </script>
     </body>
 </html>

@@ -37,10 +37,17 @@
     border: 1px solid black
 }
 
-.input {
-    margin-top: 10%;
+.textBox {
     justify-self: center;
-    width: 33vh;
+    width: 32vh;
+    height: 5vh;
+}
+
+.verbBox {
+    margin: 2%;
+    justify-self: center;
+    content: center;
+    width: 32vh;
     height: 5vh;
 }
 
