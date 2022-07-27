@@ -1,23 +1,34 @@
+* {
+    font-family: 'Grenze Gotisch', cursive;
+    font-size: 110%;
+}
 .container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: flex;
+    width: 100%;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
 }
 
 .canvas {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-    grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    grid-template-columns: repeat(32, 1fr);
     gap: 0px 0px;
-    grid-auto-flow: row;
-    height: 95vh;
     width: 95vh;
+    height: 95vh;
     background-color: floralwhite;
-    border: 5px solid darkslategray;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 70%;
+    outline: 5px solid darkslategray;
 }
 
 .holder {
-    align-self: center;
-    margin-left: 10%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    flex-wrap: wrap;
+    outline: auto;
 }
 
 .palette {
@@ -26,7 +37,27 @@
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
     gap: 0px 0px;
-    grid-auto-flow: row;
+}
+
+@media screen and (orientation: portrait) {
+    .canvas {
+        width: 95vw;
+        height: 95vw;
+    }
+    .holder {
+        display: grid;
+        justify-content: stretch;
+        align-items: center;
+        grid-template-columns: 1fr 1fr;
+    }
+    .palette {
+        height: 5vw;
+        width: 95vw;
+        display: grid;
+        grid-template-columns: repeat(32, 1fr);
+        grid-template-rows: 1fr 1fr;
+        grid-column: 1 / -1;
+    }
 }
 
 .button {
@@ -39,6 +70,7 @@
 
 .textBox {
     justify-self: center;
+    text-align: center;
     width: 32vh;
     height: 5vh;
 }
@@ -46,7 +78,7 @@
 .verbBox {
     margin: 2%;
     justify-self: center;
-    content: center;
+    text-align: center;
     width: 32vh;
     height: 5vh;
 }
@@ -63,9 +95,5 @@
 
 .activeColor {
     outline: 4px solid blue;
-    z-index: 10;
-}
-.active2ndColor {
-    outline: 4px solid yellow;
     z-index: 10;
 }

@@ -86,7 +86,7 @@ const verbs = {
     lesen : {verb : "lesen", english : "read", prep : "", presentStem : ["les","lies"], strength : "strong", preteriteStem : "las", pastPart : "gelesen", aux : "haben"},
     sprechen : {verb : "sprechen", english : "speak", prep : "", presentStem : ["sprech","sprich"], strength : "strong", preteriteStem : "sprach", pastPart : "gesprochen", aux : "haben"},
     geben : {verb : "geben", english : "give", prep : "", presentStem : ["geb","gib"], strength : "strong", preteriteStem : "gab", pastPart : "gegeben", aux : "haben"},
-    treffen : {verb : "trefen", english : "meet", prep : "", presentStem : ["treff","triff"], strength : "strong", preteriteStem : "traf", pastPart : "getroffen", aux : "haben"},
+    treffen : {verb : "treffen", english : "meet", prep : "", presentStem : ["treff","triff"], strength : "strong", preteriteStem : "traf", pastPart : "getroffen", aux : "haben"},
     sehen : {verb : "sehen", english : "see", prep : "", presentStem : ["seh","sieh"], strength : "string", preteriteStem : "sah", pastPart : "gesehen", aux : "haben"},
     können : {verb : "können", english : "can", prep : "", presentStem : ["könn","kann"], strength : "prt-prs", preteriteStem : "konn", pastPart : "gekonnt", aux : "haben"},
     müssen : {verb : "müssen", english : "must", prep : "", presentStem : ["müss","muss"], strength : "prt-prs", preteriteStem : "muss", pastPart : "müssen", aux : "haben"},
@@ -192,10 +192,10 @@ const persons = {
 const tenses = {
     present : "[prs] … jetzt",
     preterit : "(geschrieben) [prs] … gestern",
-    perfect : "(gesprochen) [prs] … gestern",
+    perfect : "(gesprochen) [prs] … gestern …",
     pluperfect : "[prs] … gerstern zuerst … dann",
     future : "morgen … [prs] vielleicht …",
-    futurePerfect : "morgen … [prs] wohl vor … ..."
+    futurePerfect : "morgen … [prs] wohl … …"
  }
 
  function conjugate(vrb, english, prep, presentStem, strength, preteriteStem, pastPart, aux, pers, ten) {
@@ -340,7 +340,7 @@ function randomize(vrb){
         person = p
         tense = t
         verbBox.innerHTML = verbs[w].verb
-        textBox.value = tenses[t].replace('[prs]',prn)
+        textBox.placeholder = tenses[t].replace('[prs]',prn)
     }
 }
 

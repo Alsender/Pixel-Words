@@ -6,6 +6,12 @@ var verb
 var person
 var tense
 
+function loadFromURL(){
+    let imageLink = prompt("","enter a URL here")
+    console.log(imageLink)
+    canvas.style.removeProperty("background-color")
+    canvas.style.backgroundImage = "url(" + imageLink + ")"
+}
 function chooseColor(target) {
     if (document.querySelectorAll('.activeColor').length != 0) {
         document.querySelectorAll('.activeColor')[0].classList.toggle('activeColor')
@@ -20,6 +26,9 @@ function paint(target) {
             return
         }
     }
+    if (counter === 0) {
+        randomize()
+    }
     if (counter < 3) {
         if (chosenColor === undefined) {
             return
@@ -30,9 +39,6 @@ function paint(target) {
         counter++
         toBeUndone.push(target)
     }
-    if (counter == 3) {
-        randomize()
-    }
 }
 function keyup(event) {
     if (event.keyCode === 90 && event.ctrlKey) undo();
@@ -40,23 +46,24 @@ function keyup(event) {
     else return
 }
 function confirm() {
-    console.log(verb,person,tense)
-    check = conjugate(...Object.values(verbs[verb]),person,tense).replace(/\s/g, ' +[\\s/\\S]+ ').split(",")
-    console.log(check)
-    for (i=0;i<check.length;i++) {
-        if (textBox.value.match(check[i]) == null) {
-            return false
-        } else 
-        for (i = 0; i <= toBePainted.length - 1; i++) {toBePainted[i].style.backgroundColor = toBePainted[i].dataset.color}
-        toBePainted = []
-        toBeUndone = []
-        counter = 0
+    let checks = conjugate(...Object.values(verbs[verb]),person,tense).split(",")
+    let check = ''
+    for (i=0;i<checks.length;i++) {
+        check = '(\\b' + checks[i].replace(/\s/g, '\\b)+[\\s/\\S]+(\\b') + '\\b)'
+        checkExp = new RegExp(check,'g')
+        console.log(checks,check)
+        if (checkExp.test(textBox.value)) {
+            for (i = 0; i <= toBePainted.length - 1; i++) {
+                toBePainted[i].style.backgroundColor = toBePainted[i].dataset.color
+            }
+            toBePainted = []
+            toBeUndone = []
+            counter = 0
+            verbBox.innerHTML = ""
+            textBox.placeholder = ""
+            textBox.value = ""
+        }
     }
-//    if (check.some(c => textBox.value.match(c))) {
-//        for (i = 0; i <= toBePainted.length - 1; i++) {
-//            toBePainted[i].style.backgroundColor = toBePainted[i].dataset.color
-        
-//    }
 }
 function remove(target) {
     for (i = 0; i < toBePainted.length; i++) {
