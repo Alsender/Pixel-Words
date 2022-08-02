@@ -39,6 +39,7 @@ const irregs = {
     halten : {
         present : {thirdSg : "hält"},
         preterit : {secondSg: "hieltest,hieltst"}},
+    müssen : {present : {secondSg: "müsst"}},
     tun : {preterit : {secondSg: "tatest,tatst" }},
     entscheiden : {preterit : {secondSg: "entschiedest,entschiedst"}},
     verstanden : {preterit : {secondSg: "verstandest,verstandst"}},
@@ -64,6 +65,7 @@ const irregs = {
 const german = {}
 
 const verbs = {
+    //: {infinitive : "", strength : "", thirdSgPres : "", pastStem : "", pastPart : "", pastSubj : "", aux : ""},
     sein : {verb : "sein", english : "be", prep : "", presentStem : ["",""], strength : "strong", preteriteStem : "war", pastPart : "gewesen", aux : "sein"},
     haben : {verb : "haben", english : "have", prep : "", presentStem : ["",""], strength : "weak", preteriteStem : "hat", pastPart : "gehabt", aux : "haben"},
     werden : {verb : "werden", english : "become", prep : "", presentStem : ["",""], strength : "strong", preteriteStem : "wurd", pastPart : "geworden", aux : "sein"},

@@ -16,7 +16,12 @@
             <aside class="holder" id="holder">
                 <!-- <button onclick="loadFromURL()">Load background image from URL</button> -->
                 <div class="palette" id="palette"></div>
-                <div class="verbBox" id="verbBox"></div>
+                <div class="verbBox" id="verbBox">
+                    <div class="verb">verb</div>
+                    <div class="person">person</div>
+                    <div class="tense">tense</div>
+                    <div class="context">geschprochen und geschrieben</div>
+                </div>
                 <input type="text" class="textBox" id="textBox"></input>
             </aside>
         </main>
@@ -33,6 +38,7 @@
                 pixel.id = i
                 pixel.onclick = function() {paint(event.target)}
                 pixel.oncontextmenu = function() {remove(event.target); return false}
+                pixel.onmouseenter = function() {hover(event.target)}
             }
 
             for (i = 0; i < 64; i++) {
@@ -43,6 +49,8 @@
                 color.id = "color" + i
                 color.onclick = function() {chooseColor(event.target)}
             }
+            hover(document.getElementById('0'))
+            chooseColor(document.getElementById('color0'))
             document.addEventListener('keyup', function() {keyup(event)})
         </script>
     </body>

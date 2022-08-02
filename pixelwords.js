@@ -6,6 +6,8 @@ var verb
 var person
 var tense
 
+var hovered = []
+
 function loadFromURL(){
     let imageLink = prompt("","enter a URL here")
     console.log(imageLink)
@@ -19,31 +21,53 @@ function chooseColor(target) {
     chosenColor = crayola[(target.id).substring(5)]
     target.classList.toggle('activeColor')
 }
-function paint(target) {
-    for (i = 0; i < toBePainted.length; i++) {
-        if (target === toBePainted[i]) {
-            remove(target)
-            return
+function paint() {
+    if (hovered[0].dataset.color != chosenColor) {
+        for (i = 0; i < toBePainted.length; i++) {
+            if (hovered[0] === toBePainted[i]) {
+                remove(hovered[0])
+                return
+            }
         }
-    }
-    if (counter === 0) {
-        randomize()
-    }
-    if (counter < 3) {
-        if (chosenColor === undefined) {
-            return
-        } else
-        toBePainted.push(target)
-        target.dataset.color = chosenColor
-        target.style.backgroundColor = chosenColor+50
-        counter++
-        toBeUndone.push(target)
+        switch (counter) {
+            case 0 : randomize()
+            case 1 :
+            case 2 : {
+                if (chosenColor != undefined) {
+                    toBePainted.push(hovered[0])
+                    hovered[0].dataset.color = chosenColor
+                    hovered[0].style.backgroundColor = chosenColor+50
+                    counter++
+                    toBeUndone.push(hovered[0])
+                    if (counter === 3) {textBox.focus()}
+                }
+            }
+            case 3 : break;
+        }
     }
 }
 function keyup(event) {
-    if (event.keyCode === 90 && event.ctrlKey) undo();
-    else if (event.keyCode === 13) confirm();
-    else return
+    switch (event.keyCode) {
+        case 90 : if (event.ctrlKey) undo(); break;
+        case 13 : textBox.value != "" ? confirm() : paint(); break;
+        case 46 : erase(); break;
+        case 37 : 
+        case 38 :
+        case 39 :
+        case 40 :
+            event.ctrlKey ? arrowKeyPaintHandler(event) : arrowKeyPixelHandler(event);
+        default : return
+    }
+}
+function hover(target) {
+    if (counter === 3) {return}
+    else
+    hovered.push(target)
+    if (hovered.length === 2) {
+        hovered[0].classList.toggle('hovered')
+        hovered.splice(0,1)
+    }
+    hovered[0].classList.toggle('hovered')
 }
 function confirm() {
     let checks = conjugate(...Object.values(verbs[verb]),person,tense).split(",")
@@ -62,6 +86,7 @@ function confirm() {
             verbBox.innerHTML = ""
             textBox.placeholder = ""
             textBox.value = ""
+            textBox.blur()
         }
     }
 }
@@ -80,4 +105,46 @@ function undo() {
     target = toBeUndone[toBeUndone.length - 1]
     toBeUndone.splice(toBeUndone.length - 1, 1)
     remove(target)
+}
+function erase() {
+    hovered[0].removeAttribute('data-color')
+    hovered[0].style.removeProperty('background-color')
+}
+function arrowKeyPixelHandler(event) {
+    if (counter === 3) {return}
+    else
+    event.preventDefault()
+    let hoveredID = hovered[0].id
+    switch (event.keyCode) {
+        case 37 : if ((hoveredID/32)%1 != 0) {
+            hover(document.getElementById(parseInt(hoveredID) - 1))
+        } break
+        case 38 : if (hoveredID > 31) {
+            hover(document.getElementById(parseInt(hoveredID) - 32))
+        } break
+        case 39 : if ((hoveredID/32)%1 != 0.96875) {
+            hover(document.getElementById(parseInt(hoveredID) + 1))
+        } break
+        case 40 : if (hoveredID < 991) {
+            hover(document.getElementById(parseInt(hoveredID) + 32))
+        } break
+    }
+}
+function arrowKeyPaintHandler(event) {
+    event.preventDefault()
+    let chosenColorID = document.querySelectorAll('.activeColor')[0].id.substring(5)
+    switch (event.keyCode) {
+        case 37 : if ((chosenColorID/8)%1 != 0) {
+            chooseColor(document.getElementById('color' + (parseInt(chosenColorID) - 1)))
+        } break
+        case 38 : if (chosenColorID > 7) {
+            chooseColor(document.getElementById('color' + (parseInt(chosenColorID) - 8)))
+        } break
+        case 39 : if ((chosenColorID/8)%1 != 0.875) {
+            chooseColor(document.getElementById('color' + (parseInt(chosenColorID) + 1)))
+        } break
+        case 40 : if (chosenColorID < 56) {
+            chooseColor(document.getElementById('color' + (parseInt(chosenColorID) + 8)))
+        } break
+    }
 }
