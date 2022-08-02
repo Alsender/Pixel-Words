@@ -195,9 +195,9 @@ const tenses = {
     present : "[prs] … jetzt",
     preterit : "(geschrieben) [prs] … gestern",
     perfect : "(gesprochen) [prs] … gestern …",
-    pluperfect : "[prs] … gerstern zuerst … dann",
+    pluperfect : "[prs] … gerstern zuerst … dann...",
     future : "morgen … [prs] vielleicht …",
-    futurePerfect : "morgen … [prs] wohl … …"
+    futurePerfect : "morgen … [prs] wohl vor Mittag … …"
  }
 
  function conjugate(vrb, english, prep, presentStem, strength, preteriteStem, pastPart, aux, pers, ten) {
