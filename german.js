@@ -346,6 +346,7 @@ function randomize(vrb){
         tenseField.innerHTML = tenses[t][1]
         contextField.innerHTML = tenses[t][2]
         textBox.placeholder = tenses[t][0].replace('[prs]',prn)
+        hintButton.title = conjugate(...Object.values(verbs[verb]),person,tense)
     }
 }
 

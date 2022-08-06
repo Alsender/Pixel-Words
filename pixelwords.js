@@ -39,8 +39,6 @@ function clear() {
 //KEY / MOUSE FUNCTIONALITY
 
 function hover(target) {
-    if (counter === 3) {return}
-    else
     hovered.push(target)
     if (hovered.length === 2) {
         hovered[0].classList.toggle('hovered')
@@ -51,7 +49,7 @@ function hover(target) {
 function keyup(event) {
     switch (event.keyCode) {
         case 90 : if (event.ctrlKey) undo(); break;
-        case 13 : textBox.value != "" ? confirm(event) : paint(); break;
+        case 13 : event.preventDefault(); textBox.value != "" ? confirm() : paint(); return false;
         case 46 : erase(); break;
         case 37 : 
         case 38 :
@@ -108,32 +106,29 @@ function chooseColor(target) {
     target.classList.toggle('activeColor')
 }
 function paint() {
-    if (hovered[0].dataset.color != chosenColor) {
-        for (i = 0; i < toBePainted.length; i++) {
-            if (hovered[0] === toBePainted[i]) {
-                remove(hovered[0])
-                return
-            }
-        }
-        switch (counter) {
-            case 0 : randomize()
-            case 1 :
-            case 2 : {
-                if (chosenColor != undefined) {
-                    toBePainted.push(hovered[0])
-                    hovered[0].dataset.color = chosenColor
-                    hovered[0].style.backgroundColor = chosenColor+50
-                    counter++
-                    toBeUndone.push(hovered[0])
-                    if (counter === 3) {textBox.focus()}
-                }
-            }
-            case 3 : break;
+    for (i = 0; i < toBePainted.length; i++) {
+        if (hovered[0] === toBePainted[i]) {
+            remove(hovered[0])
+            return
         }
     }
+    switch (counter) {
+        case 0 : randomize()
+        case 1 :
+        case 2 : {
+            if (chosenColor != undefined) {
+                toBePainted.push(hovered[0])
+                hovered[0].dataset.color = chosenColor
+                hovered[0].style.backgroundColor = chosenColor+50
+                counter++
+                toBeUndone.push(hovered[0])
+                if (counter === 3) {textBox.focus()}
+            }
+        }
+        case 3 : break;
+    }
 }
-function confirm(event) {
-    event.preventDefault()
+function confirm() {
     let checks = conjugate(...Object.values(verbs[verb]),person,tense).split(",")
     let check = ''
     for (i=0;i<checks.length;i++) {

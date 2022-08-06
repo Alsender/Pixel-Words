@@ -18,6 +18,8 @@
                 <div class="buttons-holder" id="buttons-holder">
                     <button onclick="loadFromURL()" title="Load background image from URL">🖼️</button>
                     <button onclick="clear()" title="clear canvas">↻</button>
+                    <button onclick="erase()" title="erase">⩐</button>
+                    <button id="hint" title="">hint</button>
                 </div>
                 <div class="verbBox" id="verbBox">
                     <div class="person" id="person">wer: </div>
@@ -36,6 +38,7 @@
             const verbField = document.getElementById('verb')
             const tenseField = document.getElementById('tense')
             const contextField = document.getElementById('context')
+            const hintButton = document.getElementById('hint')
 
             var chosenColor
 
