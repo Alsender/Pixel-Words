@@ -1,89 +1,3 @@
-* {
-    font-family: 'Grenze Gotisch', cursive;
-    font-size: 110%;
-}
-.container {
-    display: flex;
-    width: 100%;
-    justify-content: space-evenly;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
-.canvas {
-    display: grid;
-    grid-template-columns: repeat(32, 1fr);
-    gap: 0px 0px;
-    width: 95vh;
-    height: 95vh;
-    background-color: floralwhite;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: 70%;
-    outline: 5px solid darkslategray;
-}
-
-.holder {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
-    align-items: center;
-    flex-wrap: wrap;
-    outline: auto;
-}
-
-.palette {
-    height: 33vh;
-    width: 33vh;
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-    gap: 0px 0px;
-}
-
-.button {
-    border: 1px solid darkslategray;
-}
-
-.pixel {
-    border: 1px solid black
-}
-
-.textBox {
-    width: 32vh;
-    height: 5vh;
-}
-
-.verbBox {
-    outline: auto;
-    width: 32vh;
-    display: flex;
-    flex-wrap: wrap;
-}
-.verb {
-    outline: auto;
-    flex-grow: 1;
-    min-width: fit-content;
-    text-align: center;
-}
-.person {
-    outline: auto;
-    flex-grow: 1;
-    min-width: fit-content;
-    text-align: center;
-}
-.tense {
-    outline: auto;
-    flex-grow: 1;
-    min-width: fit-content;
-    text-align: center;
-}
-.context {
-    outline: auto;
-    flex-grow: 1;
-    min-width: fit-content;
-    text-align: center;
-}
-
 .pixel.hovered {
     outline: 2px solid red;
     z-index: 10;
@@ -98,29 +12,191 @@
     outline: 4px solid blue;
     z-index: 10;
 }
-
-@media screen and (orientation: portrait) {
+@media screen and (orientation: landscape) {
     * {
-        font-size: 120%;
+        font-family: 'Grenze Gotisch', cursive;
+        font-size: 110%;
     }
-    .canvas {
-        width: 95vw;
-        height: 95vw;
-    }
-    .holder {
+    .container {
+        display: flex;
         width: 100%;
+        height: 100%;
+        justify-content: space-evenly;
+        gap: 10px;
+    }
+    
+    .canvas {
+        display: grid;
+        grid-template-columns: repeat(32, 1fr);
+        gap: 0px 0px;
+        height: 95vh;
+        aspect-ratio: 1 / 1;
+        background-color: floralwhite;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: 70%;
+        outline: 5px solid darkslategray;
+    }
+    
+    .holder {
         display: flex;
         flex-direction: column;
+        justify-content: space-evenly;
+        align-items: center;
+        flex-wrap: wrap;
+        outline: auto;
+    }
+    
+    .palette {
+        max-width: 200px;
+        width: 75%;
+        aspect-ratio: 1/1;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+        gap: 0px 0px;
+    }
+    .buttons-holder {
+        outline: auto;
+        justify-self: initial;
+    }
+    
+    .button {
+        border: 1px solid darkslategray;
+    }
+    
+    .pixel {
+        border: 1px solid black
+    }
+
+    .textBox {
+        width: 95%;
+    }
+    
+    .verbBox {
+        outline: auto;
+        width: 32vh;
+        display: flex;
+        flex-wrap: wrap;
+    }
+    .verb {
+        outline: auto;
+        flex-grow: 1;
+        min-width: fit-content;
+        text-align: center;
+    }
+    .person {
+        outline: auto;
+        flex-grow: 1;
+        min-width: fit-content;
+        text-align: center;
+    }
+    .tense {
+        outline: auto;
+        flex-grow: 1;
+        min-width: fit-content;
+        text-align: center;
+    }
+    .context {
+        outline: auto;
+        flex-grow: 1;
+        min-width: fit-content;
+        text-align: center;
+    }
+}
+
+@media screen and (max-aspect-ratio: 11/9) {
+    * {
+        font-family: 'Grenze Gotisch', cursive;
+        font-size: 120%;
+    }
+    .container {
+        display: flex;
+        width: 100%;
+        justify-content: space-evenly;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    
+    .canvas {
+        display: grid;
+        grid-template-columns: repeat(32, 1fr);
+        gap: 0px 0px;
+        width: 95vw;
+        height: 95vw;
+        background-color: floralwhite;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: 70%;
+        outline: 5px solid darkslategray;
+    }
+    
+    .holder {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+        align-items: center;
+        flex-wrap: wrap;
+        outline: auto;
+        width: 100%;
         gap: 5px;
         align-items: center;
         grid-template-columns: 1fr 1fr;
     }
+    
     .palette {
         height: 5vw;
         width: 95vw;
         display: grid;
+        gap: 0px 0px;
         grid-template-columns: repeat(32, 1fr);
         grid-template-rows: 1fr 1fr;
         grid-column: 1 / -1;
+    }
+    .buttons-holder {
+        outline: auto;
+        justify-self: initial;
+    }
+    
+    .button {
+        border: 1px solid darkslategray;
+    }
+    
+    .pixel {
+        border: 1px solid black
+    }
+    
+    .textBox {
+        width: 95%;
+    }
+    
+    .verbBox {
+        outline: auto;
+        width: 32vh;
+        display: flex;
+        flex-wrap: wrap;
+    }
+    .verb {
+        outline: auto;
+        flex-grow: 1;
+        min-width: fit-content;
+        text-align: center;
+    }
+    .person {
+        outline: auto;
+        flex-grow: 1;
+        min-width: fit-content;
+        text-align: center;
+    }
+    .tense {
+        outline: auto;
+        flex-grow: 1;
+        min-width: fit-content;
+        text-align: center;
+    }
+    .context {
+        outline: auto;
+        flex-grow: 1;
+        min-width: fit-content;
+        text-align: center;
     }
 }

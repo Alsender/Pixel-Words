@@ -65,7 +65,7 @@ const irregs = {
 const german = {}
 
 const verbs = {
-    //: {infinitive : "", strength : "", thirdSgPres : "", pastStem : "", pastPart : "", pastSubj : "", aux : ""},
+    //: {english: "", infinitive : "", strength : "", thirdSgPres : "", pastStem : "", pastPart : "", pastSubj : "", aux : ""},
     sein : {verb : "sein", english : "be", prep : "", presentStem : ["",""], strength : "strong", preteriteStem : "war", pastPart : "gewesen", aux : "sein"},
     haben : {verb : "haben", english : "have", prep : "", presentStem : ["",""], strength : "weak", preteriteStem : "hat", pastPart : "gehabt", aux : "haben"},
     werden : {verb : "werden", english : "become", prep : "", presentStem : ["",""], strength : "strong", preteriteStem : "wurd", pastPart : "geworden", aux : "sein"},
@@ -99,10 +99,10 @@ const verbs = {
     schreiben : {verb : "schreiben", english : "write", prep : "", presentStem : ["schreib","schreib"], strength : "strong", preteriteStem : "schrieb", pastPart : "geschrieben", aux : "haben"},
     erkennen : {verb : "erkennen", english : "recognise", prep : "", presentStem : ["erkenn","erkenn"], strength : "weak", preteriteStem : "erkann", pastPart : "erkannt", aux : "haben"},
     beschreiben : {verb : "beschreiben", english : "describe", prep : "", presentStem : ["beschreib","beschreib"], strength : "strong", preteriteStem : "beschrieb", pastPart : "beschrieben", aux : "haben"},
-    schreien : {verb : "scheien", english : "scream", prep : "", presentStem : ["schei","schrei"], strength : "strong", preteriteStem : "schrie", pastPart : "geschrien", aux : "haben"},
+    schreien : {verb : "schreien", english : "scream", prep : "", presentStem : ["schrei","schrei"], strength : "strong", preteriteStem : "schrie", pastPart : "geschrien", aux : "haben"},
     trinken : {verb : "trinken", english : "drink", prep : "", presentStem : ["trink","trink"], strength : "strong", preteriteStem : "trank", pastPart : "getrunken", aux : "haben"},
     denken : {verb : "denken", english : "think", prep : "", presentStem : ["denk","denk"], strength : "weak", preteriteStem : "dach", pastPart : "gedacht", aux : "haben"},
-    entscheiden : {verb : "entscheiden", english : "decide", prep : "", presentStem : ["entscheid","entscheid"], strength : "strong", preteriteStem : "entschied", pastPart : "enschieden", aux : "haben"},
+    entscheiden : {verb : "entscheiden", english : "decide", prep : "", presentStem : ["entscheid","entscheid"], strength : "strong", preteriteStem : "entschied", pastPart : "entschieden", aux : "haben"},
     verstehen : {verb : "verstehen", english : "understand", prep : "", presentStem : ["versteh","versteh"], strength : "strong", preteriteStem : "verstand", pastPart : "verstanden", aux : "haben"},
     finden : {verb : "finden", english : "find", prep : "", presentStem : ["find","find"], strength : "strong", preteriteStem : "fand", pastPart : "gefunden", aux : "haben"},
     singen : {verb : "singen", english : "sing", prep : "", presentStem : ["sing","sing"], strength : "strong", preteriteStem : "sang", pastPart : "gesungen", aux : "haben"},
@@ -139,7 +139,7 @@ const verbs = {
     ausruhen : {verb : "ausruhen", english : "rest", prep : "aus", presentStem : ["ruh","ruh"], strength : "weak", preteriteStem : "ruh", pastPart : "ausgeruht", aux : "haben"},
     erlauben : {verb : "erlauben", english : "allow", prep : "", presentStem : ["erlaub","erlaub"], strength : "weak", preteriteStem : "erlaub", pastPart : "erlaubt", aux : "haben"},
     glauben : {verb : "glauben", english : "believe", prep : "", presentStem : ["glaub","glaub"], strength : "weak", preteriteStem : "glaub", pastPart : "geglaubt", aux : "haben"},
-    hoffen : {verb : "hoffen", english : "hope", prep : "", presentStem : ["hoff","hoff"], strength : "weak", preteriteStem : "hoff", pastPart : "hoff", aux : "haben"},
+    hoffen : {verb : "hoffen", english : "hope", prep : "", presentStem : ["hoff","hoff"], strength : "weak", preteriteStem : "hoff", pastPart : "gehofft", aux : "haben"},
     tanzen : {verb : "tanzen", english : "dance", prep : "", presentStem : ["tanz","tanz"], strength : "weak", preteriteStem : "tanz", pastPart : "getanzt", aux : "haben,sein"},
     bewegen : {verb : "bewegen", english : "move", prep : "", presentStem : ["beweg","beweg"], strength : "strong", preteriteStem : "bewog", pastPart : "bewogen", aux : "haben"},
     kämpfen : {verb : "kämpfen", english : "fight", prep : "", presentStem : ["kämpf","kämpf"], strength : "weak", preteriteStem : "kämpf", pastPart : "gekämpft", aux : "haben"},
@@ -155,7 +155,7 @@ const verbs = {
     drücken : {verb : "drücken", english : "press", prep : "", presentStem : ["drück","drück"], strength : "weak", preteriteStem : "drück", pastPart : "gedrückt", aux : "haben"},
     leben : {verb : "leben", english : "live", prep : "", presentStem : ["leb","leb"], strength : "weak", preteriteStem : "leb", pastPart : "gelebt", aux : "haben"},
     fühlen : {verb : "fühlen", english : "feel", prep : "", presentStem : ["fühl","fühl"], strength : "weak", preteriteStem : "fühl", pastPart : "gefühlt", aux : "haben"},
-    spielen : {verb : "spielen", english : "", prep : "", presentStem : ["spiel","spiel"], strength : "weak", preteriteStem : "weak", pastPart : "spiel", aux : "haben"},
+    spielen : {verb : "spielen", english : "", prep : "", presentStem : ["spiel","spiel"], strength : "weak", preteriteStem : "weak", pastPart : "gespielt", aux : "haben"},
     kaufen : {verb : "kaufen", english : "buy, purchase", prep : "", presentStem : ["kauf","kauf"], strength : "weak", preteriteStem : "kauf", pastPart : "gekauft", aux : "haben"},
     verkaufen : {verb : "verkaufen", english : "sell", prep : "", presentStem : ["verkauf","verkauf"], strength : "weak", preteriteStem : "verkauf", pastPart : "verkauft", aux : "haben"},
     kosten : {verb : "kosten", english : "cost, taste", prep : "", presentStem : ["kost","koste"], strength : "weak", preteriteStem : "koste", pastPart : "gekostet", aux : "haben"},
@@ -192,12 +192,12 @@ const persons = {
   }
   
 const tenses = {
-    present : "[prs] … jetzt",
-    preterit : "(geschrieben) [prs] … gestern",
-    perfect : "(gesprochen) [prs] … gestern …",
-    pluperfect : "[prs] … gerstern zuerst … dann...",
-    future : "morgen … [prs] vielleicht …",
-    futurePerfect : "morgen … [prs] wohl vor Mittag … …"
+    present : ["[prs] … jetzt","jetzt",""],
+    preterit : ["[prs] … gestern","gestern", "geschrieben"],
+    perfect : ["[prs] … gestern …", "gestern", "gesprochen"],
+    pluperfect : ["[prs] … gestern zuerst …, dann ist noch was passiert","gestern vor etwas anderem",""],
+    future : ["morgen … [prs] vielleicht …","morgen",""],
+    futurePerfect : ["morgen … [prs] wohl vor Mittag … …","morgen vor Mittag",""]
  }
 
  function conjugate(vrb, english, prep, presentStem, strength, preteriteStem, pastPart, aux, pers, ten) {
@@ -341,8 +341,11 @@ function randomize(vrb){
         verb = w
         person = p
         tense = t
-        verbBox.innerHTML = verbs[w].verb
-        textBox.placeholder = tenses[t].replace('[prs]',prn)
+        personField.innerHTML = prn
+        verbField.innerHTML = verbs[w].verb
+        tenseField.innerHTML = tenses[t][1]
+        contextField.innerHTML = tenses[t][2]
+        textBox.placeholder = tenses[t][0].replace('[prs]',prn)
     }
 }
 

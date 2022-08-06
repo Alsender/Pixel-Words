@@ -14,21 +14,29 @@
         <main class="container" id="container">
             <div class="canvas" id="canvas"></div>
             <aside class="holder" id="holder">
-                <!-- <button onclick="loadFromURL()">Load background image from URL</button> -->
                 <div class="palette" id="palette"></div>
-                <div class="verbBox" id="verbBox">
-                    <div class="verb"></div>
-                    <div class="person"></div>
-                    <div class="tense"></div>
-                    <div class="context"></div>
+                <div class="buttons-holder" id="buttons-holder">
+                    <button onclick="loadFromURL()" title="Load background image from URL">🖼️</button>
+                    <button onclick="clear()" title="clear canvas">↻</button>
                 </div>
-                <input type="text" class="textBox" id="textBox"></input>
+                <div class="verbBox" id="verbBox">
+                    <div class="person" id="person">wer: </div>
+                    <div class="verb" id="verb">was: </div>
+                    <div class="tense" id="tense">wenn: </div>
+                    <div class="context" id="context">wie: </div>
+                </div>
+                <textarea class="textBox" id="textBox" rows="4" cols="50"></textarea>
             </aside>
         </main>
         <script>
             const canvas  = document.getElementById('canvas')
             const palette = document.getElementById('palette')
             const textBox = document.getElementById('textBox')
+            const personField = document.getElementById('person')
+            const verbField = document.getElementById('verb')
+            const tenseField = document.getElementById('tense')
+            const contextField = document.getElementById('context')
+
             var chosenColor
 
             for (i = 0; i < 32*32; i++) {
@@ -52,6 +60,7 @@
             hover(document.getElementById('0'))
             chooseColor(document.getElementById('color0'))
             document.addEventListener('keyup', function() {keyup(event)})
+            load()
         </script>
     </body>
 </html>
