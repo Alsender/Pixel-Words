@@ -1,3 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+* {
+    font-family: 'VT323', monospace;
+}
+
+.container {
+    padding: 1%;
+}
+
 .pixel.hovered {
     outline: 2px solid red;
     z-index: 10;
@@ -13,52 +22,116 @@
     z-index: 10;
 }
 @media screen and (orientation: landscape) {
-    * {
-        font-family: 'Grenze Gotisch', cursive;
-        font-size: 110%;
-    }
     .container {
-        display: flex;
-        width: 100%;
-        height: 100%;
-        justify-content: space-evenly;
-        gap: 10px;
-    }
-    
-    .canvas {
         display: grid;
-        grid-template-columns: repeat(32, 1fr);
-        gap: 0px 0px;
-        height: 95vh;
-        aspect-ratio: 1 / 1;
-        background-color: floralwhite;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-size: 70%;
-        outline: 5px solid darkslategray;
+        grid-template-areas: 
+            "side tool canvas"
+            "side text text";
+        grid-template-rows: 1fr 150px;
+        grid-template-columns: 250px 50px 1fr;
+        gap: 10px;
+        height: 94vh;
     }
     
-    .holder {
+    .sidebar {
+        grid-area: side;
         display: flex;
         flex-direction: column;
-        justify-content: space-evenly;
         align-items: center;
-        flex-wrap: wrap;
+        outline: 5px auto darkslategray;
+        background-color: slategray;
+        gap: 1%;
+    }
+        .palette {
+            width: 245px;
+            aspect-ratio: 1/1;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+            gap: 2.5px 2.5px;
+            padding: 2.5px;
+            background-color: black;
+        }
+        .verbBox {
+            outline: auto;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            flex-wrap: wrap;
+        }
+            .context {
+                outline: auto;
+                flex-grow: 1;
+                min-width: fit-content;
+                text-align: center;
+                font-size: 2em;
+            }
+            #person::before {
+                content: "wer:  ";
+            }
+            #verb::before {
+                content: "was:  ";
+            }
+            #tense::before {
+                content: "wenn: ";
+            }
+            #context::before {
+                content: "wie:  ";
+            }
+
+        .hintbox {
+            font-size: 1.5em;
+            padding-top: 2%;
+            padding-bottom: 1%;
+            text-align: center;
+            width: 100%;
+            outline: auto;
+        }
+            .hintcontent {
+                display: none;
+            }
+
+    .toolbox {
+        grid-area: tool;
+        display: flex;
+        flex-direction: column;
         outline: auto;
+        background-color: slategray;
     }
-    
-    .palette {
-        max-width: 200px;
-        width: 75%;
-        aspect-ratio: 1/1;
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-        gap: 0px 0px;
-    }
-    .buttons-holder {
+        .subtoolbox {
+            display: grid;
+            padding: 10%;
+        }
+        .toolbarButton {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            background-color: lightgrey;
+            outline: auto;
+            margin: 1px;
+        }
+
+    #canvasArea {
+        grid-area: canvas;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: auto;
         outline: auto;
-        justify-self: initial;
+        background-color: darkgray;
+        flex-grow: 1;
     }
+        #canvas {
+            --scale: 100%;
+            --vert: 50%;
+            --horz: 50%;
+            display: grid;
+            grid-template-columns: repeat(32, 1fr);
+            scale: var(--scale);
+            gap: 0px 0px;
+            height: 95%;
+            aspect-ratio: 1 / 1;
+            background-color: #fffaf0;
+            outline: 5px solid darkslategray;
+        }
     
     .button {
         border: 1px solid darkslategray;
@@ -69,52 +142,62 @@
     }
 
     .textBox {
-        width: 95%;
+        grid-area: text;
+        font-size: 2em;
+        background-color: darkgray;
     }
-    
-    .verbBox {
+
+    #referenceWindow {
+        position: absolute;
+        width: 300px;
+        height: 320px;
         outline: auto;
-        width: 32vh;
-        display: flex;
-        flex-wrap: wrap;
+        background-color: cornflowerblue;
     }
-    .verb {
-        outline: auto;
-        flex-grow: 1;
-        min-width: fit-content;
-        text-align: center;
-    }
-    .person {
-        outline: auto;
-        flex-grow: 1;
-        min-width: fit-content;
-        text-align: center;
-    }
-    .tense {
-        outline: auto;
-        flex-grow: 1;
-        min-width: fit-content;
-        text-align: center;
-    }
-    .context {
-        outline: auto;
-        flex-grow: 1;
-        min-width: fit-content;
-        text-align: center;
-    }
+            #closeButton {
+            font-size: 1em;
+            font-family: 'Courier New', Courier, monospace;
+            position: absolute;
+            right: 0px;
+            background-color: red;
+            font-weight: bold;
+            color: white;
+        }
+        #closeButton::after {
+            content: "x";
+        }
+        #referenceArea {
+            overflow: auto;
+            width: 300px;
+            height: 300px;
+            position: absolute;
+            top: 20px;
+            background-color: whitesmoke;
+        }
+        #reference {
+            width: 150px;
+            height: 150px;
+            outline: auto;
+            position: relative;
+            top: 25%;
+            left: 25%;
+            background-color: white;
+        }
 }
 
 @media screen and (max-aspect-ratio: 11/9) {
-    * {
-        font-family: 'Grenze Gotisch', cursive;
-        font-size: 120%;
-    }
     .container {
         display: flex;
         width: 100%;
         justify-content: space-evenly;
         flex-wrap: wrap;
         gap: 10px;
+    }
+
+    .textBox {
+        width: 100%;
+        font-size: 2em;
+        height: 2em;
     }
     
     .canvas {
@@ -129,8 +212,23 @@
         background-size: 70%;
         outline: 5px solid darkslategray;
     }
+    .toolbox {
+        display: flex;
+        flex-direction: row;
+        outline: auto;
+    }
+        .subtoolbox {
+            display: flex;
+            padding: 1%;
+        }
+        .toolbarButton {
+            height: 50px;
+            aspect-ratio: 1 / 1;
+            background-color: lightgrey;
+            outline: auto;
+        }
     
-    .holder {
+    .sidebar {
         display: flex;
         flex-direction: column;
         justify-content: space-evenly;
@@ -143,61 +241,50 @@
         grid-template-columns: 1fr 1fr;
     }
     
-    .palette {
-        height: 5vw;
-        width: 95vw;
-        display: grid;
-        gap: 0px 0px;
-        grid-template-columns: repeat(32, 1fr);
-        grid-template-rows: 1fr 1fr;
-        grid-column: 1 / -1;
-    }
-    .buttons-holder {
-        outline: auto;
-        justify-self: initial;
-    }
+        .palette {
+            height: 5vw;
+            width: 95vw;
+            display: grid;
+            gap: 0px 0px;
+            grid-template-columns: repeat(32, 1fr);
+            grid-template-rows: 1fr 1fr;
+            grid-column: 1 / -1;
+        }
+
+        .verbBox {
+            outline: auto;
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+        }
+
+            .context {
+                outline: auto;
+                flex-grow: 1;
+                min-width: fit-content;
+                text-align: center;
+                font-size: 2em;
+            }
+            #person::before {
+                content: "wer:  ";
+            }
+            #verb::before {
+                content: "was:  ";
+            }
+            #tense::before {
+                content: "wenn: ";
+            }
+            #context::before {
+                content: "wie:  ";
+            }
     
     .button {
-        border: 1px solid darkslategray;
+        border: 3px solid darkslategray;
+        margin: 0.5px;
     }
     
     .pixel {
         border: 1px solid black
-    }
-    
-    .textBox {
-        width: 95%;
-    }
-    
-    .verbBox {
-        outline: auto;
-        width: 32vh;
-        display: flex;
-        flex-wrap: wrap;
-    }
-    .verb {
-        outline: auto;
-        flex-grow: 1;
-        min-width: fit-content;
-        text-align: center;
-    }
-    .person {
-        outline: auto;
-        flex-grow: 1;
-        min-width: fit-content;
-        text-align: center;
-    }
-    .tense {
-        outline: auto;
-        flex-grow: 1;
-        min-width: fit-content;
-        text-align: center;
-    }
-    .context {
-        outline: auto;
-        flex-grow: 1;
-        min-width: fit-content;
-        text-align: center;
     }
 }
 [title] {
@@ -205,13 +292,15 @@
     display: inline-flex;
     justify-content: center;
 }
-[title]:focus::after {
+#hint[title]:focus::after {
     content: attr(title);
     position: absolute;
     top: 90%;
+    z-index: 10;
     color: #000;
     background-color: #fff;
     border: 1px solid;
-    width: fit-content;
+    width: max-content;
     padding: 3px;
+    font-size: 70%;
 }

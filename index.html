@@ -2,33 +2,64 @@
 <html lang="en">
     <head>
         <title>PIXEL WORDS</title>
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Grenze+Gotisch:wght@300&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="style.css">
         <script type="text/javascript" src="colors.js" charset="utf-8"></script>
-        <script type="text/javascript" src="german.js" charset="utf-8"></script>
+        <!-- <script type="text/javascript" src="C:\Users\agolm\Documents\javascript games\LangaugeLib\german.js" charset="utf-8"></script> -->
+        <script type="text/javascript" src="https://alsender.github.io/LanguageLib/german.js" charset="utf-8"></script>
         <script type="text/javascript" src="pixelwords.js" charset="utf-8"></script>
     </head>
-    <body>
+    <body style="background-color: teal;">
         <main class="container" id="container">
-            <div class="canvas" id="canvas"></div>
-            <aside class="holder" id="holder">
+
+            <div class="sidebar" id="sidebar">
                 <div class="palette" id="palette"></div>
-                <div class="buttons-holder" id="buttons-holder">
-                    <button onclick="loadFromURL()" title="Load background image from URL">🖼️</button>
-                    <button onclick="clear()" title="clear canvas">↻</button>
-                    <button onclick="erase()" title="erase">⩐</button>
-                    <button id="hint" title="">hint</button>
-                </div>
                 <div class="verbBox" id="verbBox">
-                    <div class="person" id="person">wer: </div>
-                    <div class="verb" id="verb">was: </div>
-                    <div class="tense" id="tense">wenn: </div>
-                    <div class="context" id="context">wie: </div>
+                    <div class="context" id="person"></div>
+                    <div class="context" id="verb"></div>
+                    <div class="context" id="tense"></div>
+                    <div class="context" id="context"></div>
                 </div>
-                <textarea class="textBox" id="textBox" rows="4" cols="50"></textarea>
-            </aside>
+                <div class="hintbox" id="hintbox">HINT</div>
+                <div class="hintcontent" id="hintcontent">
+                    <pre class="verb" id="hintverb"></pre>
+                    <pre class="english" id="hintenglish"></pre>
+                    <pre class="present" id="hintpres"></pre>
+                    <pre class="past" id="hintpast"></pre>
+                    <pre class="pastPart" id="hintpastPart"></pre>
+                    <pre class="subjuntive" id="hintsubj"></pre>
+                    <pre class="aux" id="hintaux"></pre>
+                </div>
+            </div>
+
+            <input type="text" class="textBox" id="textBox" rows="4" cols="50"></input>
+
+            <div class="toolbox" id="toolbox">
+                <div class="subtoolbox">
+                    <input type="image" src="reference.png" onclick="loadFromURL()" title="Load background image from URL" class="toolbarButton"></input>
+                    <input type="image" src="background.png" onclick="toolHandler('changeBackground')" id="backgroundColor" title="change background color" class="toolbarButton"></input>
+                    <input type="image" src="clear.png" onclick="clearCanvas()" title="clear canvas" class="toolbarButton"></input>
+                </div>
+
+                <div class="subtoolbox">
+                    <button id="hint" title="">*</button>
+                </div>
+
+                <div class="subtoolbox">
+                    <input type="image" src="pencil.png" onclick="toolHandler('pencil')"" id="pencil" title="pencil" class="toolbarButton"></input>
+                    <input type="image" src="eraser.png" onclick="toolHandler('eraser')" id="eraser" title="eraser" class="toolbarButton"></input>
+                    <input type="image" src="eyedropper.png" onclick="toolHandler('eyedropper')" id="eyedropper" title="eyedropper" class="toolbarButton"></input>
+                </div>
+
+                <div class="subtoolbox">
+                    <input type="image" src="zoom_in.png" onclick="scaleBG('++')" id="scaleUp" title="scale up" class="toolbarButton"></input>
+                    <input type="image" src="zoom_out.png" onclick="scaleBG('--')" id="scaleDown" title="scale down" class="toolbarButton"></input>
+                </div>
+            </div>
+
+            <div id="canvasArea" class="canvasArea">
+                <div class="canvas" id="canvas"></div>
+            </div>
+            
         </main>
         <script>
             const canvas  = document.getElementById('canvas')
@@ -39,6 +70,15 @@
             const tenseField = document.getElementById('tense')
             const contextField = document.getElementById('context')
             const hintButton = document.getElementById('hint')
+            const canvasArea = document.getElementById('canvasArea')
+            const hintBox = document.getElementById('hintbox')
+            const hintverb = document.getElementById('hintverb')
+            const hintenglish = document.getElementById('hintenglish')
+            const hintpres = document.getElementById('hintpres')
+            const hintpast = document.getElementById('hintpast')
+            const hintpastPart = document.getElementById('hintpastPart')
+            const hintsubj = document.getElementById('hintsubj')
+            const hintaux = document.getElementById('hintaux')
 
             var chosenColor
 
@@ -47,7 +87,7 @@
                 canvas.appendChild(pixel)
                 pixel.setAttribute('class', 'pixel')
                 pixel.id = i
-                pixel.onclick = function() {paint(event.target)}
+                pixel.onclick = function() {canvasMousedown()}
                 pixel.oncontextmenu = function() {remove(event.target); return false}
                 pixel.onmouseenter = function() {hover(event.target)}
             }
@@ -56,13 +96,15 @@
                 color = document.createElement("button")
                 palette.appendChild(color)
                 color.setAttribute("class", "button")
+                color.dataset.color = crayola[i]
                 color.style.backgroundColor = crayola[i]
-                color.id = "color" + i
-                color.onclick = function() {chooseColor(event.target)}
+                color.id = crayola[i]
+                color.onclick = function() {paletteMousedown(event.target)}
             }
             hover(document.getElementById('0'))
-            chooseColor(document.getElementById('color0'))
+            chooseColor(document.getElementById(crayola[0]))
             document.addEventListener('keyup', function() {keyup(event)})
+            hintBox.addEventListener('click', function() {expand(event.target)})
             load()
         </script>
     </body>
