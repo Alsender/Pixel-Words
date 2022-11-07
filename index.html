@@ -6,62 +6,196 @@
         <script type="text/javascript" src="colors.js" charset="utf-8"></script>
         <!-- <script type="text/javascript" src="C:\Users\agolm\Documents\javascript games\LangaugeLib\german.js" charset="utf-8"></script> -->
         <script type="text/javascript" src="https://alsender.github.io/LanguageLib/german.js" charset="utf-8"></script>
-        <script type="text/javascript" src="pixelwords.js" charset="utf-8"></script>
     </head>
-    <body style="background-color: teal;">
-        <main class="container" id="container">
+    <body>
+        <main class="container" id="gameContainer container">
 
-            <div class="sidebar" id="sidebar">
+            <div class="sidebar box" id="sidebar">
                 <div class="palette" id="palette"></div>
                 <div class="verbBox" id="verbBox">
-                    <div class="context" id="person"></div>
-                    <div class="context" id="verb"></div>
-                    <div class="context" id="tense"></div>
-                    <div class="context" id="context"></div>
+                    <div class="context element" id="person"></div>
+                    <div class="context element" id="verb"></div>
+                    <div class="context element" id="tense"></div>
+                    <div class="context element" id="context"></div>
                 </div>
-                <div class="hintbox" id="hintbox">HINT</div>
-                <div class="hintcontent" id="hintcontent">
-                    <pre class="verb" id="hintverb"></pre>
-                    <pre class="english" id="hintenglish"></pre>
-                    <pre class="present" id="hintpres"></pre>
-                    <pre class="past" id="hintpast"></pre>
-                    <pre class="pastPart" id="hintpastPart"></pre>
-                    <pre class="subjuntive" id="hintsubj"></pre>
-                    <pre class="aux" id="hintaux"></pre>
-                </div>
-            </div>
-
-            <input type="text" class="textBox" id="textBox" rows="4" cols="50"></input>
-
-            <div class="toolbox" id="toolbox">
-                <div class="subtoolbox">
-                    <input type="image" src="reference.png" onclick="loadFromURL()" title="Load background image from URL" class="toolbarButton"></input>
-                    <input type="image" src="background.png" onclick="toolHandler('changeBackground')" id="backgroundColor" title="change background color" class="toolbarButton"></input>
-                    <input type="image" src="clear.png" onclick="clearCanvas()" title="clear canvas" class="toolbarButton"></input>
-                </div>
-
-                <div class="subtoolbox">
-                    <button id="hint" title="">*</button>
-                </div>
-
-                <div class="subtoolbox">
-                    <input type="image" src="pencil.png" onclick="toolHandler('pencil')"" id="pencil" title="pencil" class="toolbarButton"></input>
-                    <input type="image" src="eraser.png" onclick="toolHandler('eraser')" id="eraser" title="eraser" class="toolbarButton"></input>
-                    <input type="image" src="eyedropper.png" onclick="toolHandler('eyedropper')" id="eyedropper" title="eyedropper" class="toolbarButton"></input>
-                </div>
-
-                <div class="subtoolbox">
-                    <input type="image" src="zoom_in.png" onclick="scaleBG('++')" id="scaleUp" title="scale up" class="toolbarButton"></input>
-                    <input type="image" src="zoom_out.png" onclick="scaleBG('--')" id="scaleDown" title="scale down" class="toolbarButton"></input>
+                <div class="hintbox element" id="hintbox">HINT</div>
+                <div class="hintcontent element" id="hintcontent">
+                    <pre class="verb element" id="hintverb"></pre>
+                    <pre class="english element" id="hintenglish"></pre>
+                    <pre class="present element" id="hintpres"></pre>
+                    <pre class="past element" id="hintpast"></pre>
+                    <pre class="pastPart element" id="hintpastPart"></pre>
+                    <pre class="subjuntive element" id="hintsubj"></pre>
+                    <pre class="aux element" id="hintaux"></pre>
                 </div>
             </div>
 
-            <div id="canvasArea" class="canvasArea">
-                <div class="canvas" id="canvas"></div>
+            <div id="textBoxContainer" class="textBoxContainer">
+                <input type="text" class="textBox field" id="textBox" rows="4" cols="50"></input>
+            </div>
+
+            <div class="toolbox box" id="toolbox">
+                <div class="subtoolbox">
+                    <button  onclick="loadFromURL()" id="loadRef" title="Load background image from URL" class="toolbarButton element">
+                        <svg class="toolbarButtonSVG" version="1.1" viewBox="0 0 13.22917 14.55208" xmlns="http://www.w3.org/2000/svg">
+                            <g>
+                                <path d="m1.322266 1.322266v11.90625h10.58398v-11.90625z" color="#000000" stroke="none"/>
+                                <g fill="none" stroke="#000">
+                                 <path d="m2.645833 12.56771h7.937502" stop-color="#000000" stroke-opacity=".6" stroke-width="1.32292" style="font-variation-settings:normal"/>
+                                 <path d="m11.90625 13.89063h-10.58334m11.24479-12.56771v11.90625m-0.661457-12.56771h-10.58334m-0.6614587 0.6614582v11.90625" stop-color="#000000" stroke-width="1.32292" style="font-variation-settings:normal"/>
+                                 <path class="UnoptimicedTransforms" transform="matrix(-.25 0 0 .25 12.23698 12.40235)" d="m1.322917 0.6614584h5.291667m37.04167 0h-5.291667" stop-color="#000000" stroke-opacity=".8" stroke-width="5.29168" style="font-variation-settings:normal"/>
+                                 <path class="UnoptimicedTransforms" transform="matrix(-.25 0 0 .25 12.23698 11.07943)" d="m1.322917 0.6614584h5.291667m-5.291667-37.04167h5.291667m37.04167 37.04167h-5.291667m5.291667-37.04167h-5.291667" stop-color="#000000" stroke-opacity=".4" stroke-width="5.29168" style="font-variation-settings:normal"/>
+                                </g>
+                               </g>
+                            <path d="m5.688542 7.077604h0.9260417m0-0.9260417h0.9260417m0-0.9260417h0.9260417m0.4630206 1.658851v2.971358h-5.556251v-5.556251h2.930948m2.162283-1e-7h0.9260417m-2.778125-0.9260412h3.241146v3.241146" fill="none"  stroke-width=".926041"/>
+                        </svg>
+                    </button>
+                    <button onclick="toolHandler('changeBackground')" id="backgroundColor" title="change background color" class="toolbarButton element">
+                        <svg class="toolbarButtonSVG" version="1.1" viewBox="0 0 13.22917 14.55208" xmlns="http://www.w3.org/2000/svg">
+                            <g>
+                                <path d="m1.322266 1.322266v11.90625h10.58398v-11.90625z" color="#000000" stroke="none"/>
+                                <g fill="none" stroke="#000">
+                                 <path d="m2.645833 12.56771h7.937502" stop-color="#000000" stroke-opacity=".6" stroke-width="1.32292" style="font-variation-settings:normal"/>
+                                 <path d="m11.90625 13.89063h-10.58334m11.24479-12.56771v11.90625m-0.661457-12.56771h-10.58334m-0.6614587 0.6614582v11.90625" stop-color="#000000" stroke-width="1.32292" style="font-variation-settings:normal"/>
+                                 <path class="UnoptimicedTransforms" transform="matrix(-.25 0 0 .25 12.23698 12.40235)" d="m1.322917 0.6614584h5.291667m37.04167 0h-5.291667" stop-color="#000000" stroke-opacity=".8" stroke-width="5.29168" style="font-variation-settings:normal"/>
+                                 <path class="UnoptimicedTransforms" transform="matrix(-.25 0 0 .25 12.23698 11.07943)" d="m1.322917 0.6614584h5.291667m-5.291667-37.04167h5.291667m37.04167 37.04167h-5.291667m5.291667-37.04167h-5.291667" stop-color="#000000" stroke-opacity=".4" stroke-width="5.29168" style="font-variation-settings:normal"/>
+                                </g>
+                               </g>
+                            <path d="m8.466667 8.929688h0.9260418m-5.55625-0.9260417h0.9260418m3.704167-1.852083h0.9260418m-3.704167 2.778125h0.9260418m-1e-7 -0.9260417h0.9260418m-1e-7 -0.9260417h0.9260418m-3.704167 0h0.9260418m-1e-7 -0.9260417h0.9260418m-1e-7 -0.9260417h0.9260418m-1e-7 -0.9260417h0.9260418m-4.630209 0.9260417h0.9260418m-1e-7 -0.9260417h0.9260418m-2.315104-0.9260416h6.482292v6.482292h-6.482292z" fill="none"  stroke-width=".926042"/>
+                        </svg>
+                    </button>
+                    <button onclick="clearCanvas()" id="clear" title="clear canvas" class="toolbarButton element">
+                        <svg class="toolbarButtonSVG" version="1.1" viewBox="0 0 13.22917 14.55208" xmlns="http://www.w3.org/2000/svg">
+                            <g>
+                                <path d="m1.322266 1.322266v11.90625h10.58398v-11.90625z" color="#000000" stroke="none"/>
+                                <g fill="none" stroke="#000">
+                                 <path d="m2.645833 12.56771h7.937502" stop-color="#000000" stroke-opacity=".6" stroke-width="1.32292" style="font-variation-settings:normal"/>
+                                 <path d="m11.90625 13.89063h-10.58334m11.24479-12.56771v11.90625m-0.661457-12.56771h-10.58334m-0.6614587 0.6614582v11.90625" stop-color="#000000" stroke-width="1.32292" style="font-variation-settings:normal"/>
+                                 <path class="UnoptimicedTransforms" transform="matrix(-.25 0 0 .25 12.23698 12.40235)" d="m1.322917 0.6614584h5.291667m37.04167 0h-5.291667" stop-color="#000000" stroke-opacity=".8" stroke-width="5.29168" style="font-variation-settings:normal"/>
+                                 <path class="UnoptimicedTransforms" transform="matrix(-.25 0 0 .25 12.23698 11.07943)" d="m1.322917 0.6614584h5.291667m-5.291667-37.04167h5.291667m37.04167 37.04167h-5.291667m5.291667-37.04167h-5.291667" stop-color="#000000" stroke-opacity=".4" stroke-width="5.29168" style="font-variation-settings:normal"/>
+                                </g>
+                               </g>
+                            <path d="m6.151563 7.540625h0.9260417m-0.9260417-1.852083h0.9260417m0.9260417 1.852083h0.9260417m-1.852084-0.9260418h0.9260417m0-0.9260416h0.9260417m1.852082-1.852084v5.55625m-6.01927 0.4630204h5.55625m-5.55625-6.482291h5.55625m-8.334375 3.704167h0.9260417m-1e-7 0.9260417h0.9260417m0 0.9260417h0.9260417m-2.778125-2.778125h0.9260417m-1e-7 -0.9260418h0.9260417m0-0.9260416h0.9260417" fill="none"  stroke-width=".926042"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="subtoolbox">
+                    <button onclick="toolHandler('pencil')"" id="pencil" title="pencil" class="toolbarButton element">
+                        <svg class="toolbarButtonSVG" version="1.1" viewBox="0 0 13.22917 14.55208" xmlns="http://www.w3.org/2000/svg">
+                            <g>
+                                <path d="m1.322266 1.322266v11.90625h10.58398v-11.90625z" color="#000000" stroke="none"/>
+                                <g fill="none" stroke="#000">
+                                 <path d="m2.645833 12.56771h7.937502" stop-color="#000000" stroke-opacity=".6" stroke-width="1.32292" style="font-variation-settings:normal"/>
+                                 <path d="m11.90625 13.89063h-10.58334m11.24479-12.56771v11.90625m-0.661457-12.56771h-10.58334m-0.6614587 0.6614582v11.90625" stop-color="#000000" stroke-width="1.32292" style="font-variation-settings:normal"/>
+                                 <path class="UnoptimicedTransforms" transform="matrix(-.25 0 0 .25 12.23698 12.40235)" d="m1.322917 0.6614584h5.291667m37.04167 0h-5.291667" stop-color="#000000" stroke-opacity=".8" stroke-width="5.29168" style="font-variation-settings:normal"/>
+                                 <path class="UnoptimicedTransforms" transform="matrix(-.25 0 0 .25 12.23698 11.07943)" d="m1.322917 0.6614584h5.291667m-5.291667-37.04167h5.291667m37.04167 37.04167h-5.291667m5.291667-37.04167h-5.291667" stop-color="#000000" stroke-opacity=".4" stroke-width="5.29168" style="font-variation-settings:normal"/>
+                                </g>
+                               </g>
+                            <path d="m10.51719 4.7625v-1.852083m-6.019272 5.09323h0.9260417m-1.852083 0.9260417h0.9260417m3.704167-4.630208h0.9260417m-1.852083-0.9260417h0.9260417m0.9260417 1.852083h0.9260417m-1.852083 0.9260417h0.9260417m-1.852083 0.9260417h0.9260417m-1.852083 0.9260417h0.9260417m-1.852083 0.9260417h0.9260417m1.852083-6.482292h1.852083m-2.778125 0.9260417h0.9260417m-1.852083 0.9260417h0.9260417m-1.852083 0.9260417h0.9260417m-1.852083 0.9260417h0.9260417m-1.852083 0.9260417h0.9260417m0.9260417 2.778122-2.315102-1e-6v-2.315101" fill="none"  stroke-width=".926044"/>
+                        </svg>
+                    </button>
+                    <button onclick="toolHandler('eraser')" id="eraser" title="eraser" class="toolbarButton element">
+                        <svg class="toolbarButtonSVG" version="1.1" viewBox="0 0 13.22917 14.55208" xmlns="http://www.w3.org/2000/svg">
+                            <g>
+                                <path d="m1.322266 1.322266v11.90625h10.58398v-11.90625z" color="#000000" stroke="none"/>
+                                <g fill="none" stroke="#000">
+                                 <path d="m2.645833 12.56771h7.937502" stop-color="#000000" stroke-opacity=".6" stroke-width="1.32292" style="font-variation-settings:normal"/>
+                                 <path d="m11.90625 13.89063h-10.58334m11.24479-12.56771v11.90625m-0.661457-12.56771h-10.58334m-0.6614587 0.6614582v11.90625" stop-color="#000000" stroke-width="1.32292" style="font-variation-settings:normal"/>
+                                 <path class="UnoptimicedTransforms" transform="matrix(-.25 0 0 .25 12.23698 12.40235)" d="m1.322917 0.6614584h5.291667m37.04167 0h-5.291667" stop-color="#000000" stroke-opacity=".8" stroke-width="5.29168" style="font-variation-settings:normal"/>
+                                 <path class="UnoptimicedTransforms" transform="matrix(-.25 0 0 .25 12.23698 11.07943)" d="m1.322917 0.6614584h5.291667m-5.291667-37.04167h5.291667m37.04167 37.04167h-5.291667m5.291667-37.04167h-5.291667" stop-color="#000000" stroke-opacity=".4" stroke-width="5.29168" style="font-variation-settings:normal"/>
+                                </g>
+                               </g>
+                            <path d="m7.077604 7.077604h3.704167m-0.9260412 0.9260421h-1.852083m-1.852084-1.852084h4.630208m-2.778127-2.778123h-1.852083m2.778126 0.9260417h-3.704167m3.241146 4.167187v0.9260413m-0.4630199 0.4630215h-3.704167m5.556249-4.630209h-5.55625m-0.4630209 3.241146v0.9260413m1e-6 -3.704166v0.9260417m-0.9260417 0v1.852084" fill="none"  stroke-width=".92604"/>
+                        </svg>
+                    </button>
+                    <button onclick="toolHandler('eyedropper')" id="eyedropper" title="eyedropper" class="toolbarButton element" class="buttonSVG">
+                        <svg class="toolbarButtonSVG" version="1.1" viewBox="0 0 13.22917 14.55208" xmlns="http://www.w3.org/2000/svg">
+                            <g>
+                                <path d="m1.322266 1.322266v11.90625h10.58398v-11.90625z" color="#000000" stroke="none"/>
+                                <g fill="none" stroke="#000">
+                                    <path d="m2.645833 12.56771h7.937502" stop-color="#000000" stroke-opacity=".6" stroke-width="1.32292" style="font-variation-settings:normal"/>
+                                    <path d="m11.90625 13.89063h-10.58334m11.24479-12.56771v11.90625m-0.661457-12.56771h-10.58334m-0.6614587 0.6614582v11.90625" stop-color="#000000" stroke-width="1.32292" style="font-variation-settings:normal"/>
+                                    <path class="UnoptimicedTransforms" transform="matrix(-.25 0 0 .25 12.23698 12.40235)" d="m1.322917 0.6614584h5.291667m37.04167 0h-5.291667" stop-color="#000000" stroke-opacity=".8" stroke-width="5.29168" style="font-variation-settings:normal"/>
+                                    <path class="UnoptimicedTransforms" transform="matrix(-.25 0 0 .25 12.23698 11.07943)" d="m1.322917 0.6614584h5.291667m-5.291667-37.04167h5.291667m37.04167 37.04167h-5.291667m5.291667-37.04167h-5.291667" stop-color="#000000" stroke-opacity=".4" stroke-width="5.29168" style="font-variation-settings:normal"/>
+                                </g>
+                            </g>
+                            <path d="m7.077604 2.910418h2.778125m-3.704167 0.9260412h4.630211m-2.778128 4.630208h0.9260417m-2.778125-1.852083h3.704167m-5.55625-1.852084h6.482292m-3.704167 2.778125h1.852083m-3.704167-1.852083h5.55625m-4.630208 2.778125h0.9260417m-2.778125-1.852083h0.9260417m-0.9260417 2.778126h1.852083m-2.315104-2.315105v1.852083m-0.4630208 1.389063h0.9260417m-1.852083-0.9260422h0.9260417" fill="none"  stroke-width=".926048"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="subtoolbox">
+                    <button onclick="scaleBG('++')" id="scaleUp" title="scale up" class="toolbarButton element">
+                        <svg class="toolbarButtonSVG" version="1.1" viewBox="0 0 13.22917 14.55208" xmlns="http://www.w3.org/2000/svg">
+                            <g>
+                                <path d="m1.322266 1.322266v11.90625h10.58398v-11.90625z" color="#000000" stroke="none"/>
+                                <g fill="none" stroke="#000">
+                                 <path d="m2.645833 12.56771h7.937502" stop-color="#000000" stroke-opacity=".6" stroke-width="1.32292" style="font-variation-settings:normal"/>
+                                 <path d="m11.90625 13.89063h-10.58334m11.24479-12.56771v11.90625m-0.661457-12.56771h-10.58334m-0.6614587 0.6614582v11.90625" stop-color="#000000" stroke-width="1.32292" style="font-variation-settings:normal"/>
+                                 <path class="UnoptimicedTransforms" transform="matrix(-.25 0 0 .25 12.23698 12.40235)" d="m1.322917 0.6614584h5.291667m37.04167 0h-5.291667" stop-color="#000000" stroke-opacity=".8" stroke-width="5.29168" style="font-variation-settings:normal"/>
+                                 <path class="UnoptimicedTransforms" transform="matrix(-.25 0 0 .25 12.23698 11.07943)" d="m1.322917 0.6614584h5.291667m-5.291667-37.04167h5.291667m37.04167 37.04167h-5.291667m5.291667-37.04167h-5.291667" stop-color="#000000" stroke-opacity=".4" stroke-width="5.29168" style="font-variation-settings:normal"/>
+                                </g>
+                               </g>
+                            <path d="m8.466667 8.929691 0.9260416 3e-7m1e-7 0.9260414 0.9260412 3e-7m-5.55625-3.70417 2.778125 3e-7m-1.389059-1.38906-3e-7 2.778125m2.778125-2.778125-3e-7 2.778125m-1.389066-3.241148 0.9260416 3e-7m-0.9260416 3.704169 0.9260416 3e-7m-3.704167 0.9260389 2.778125 3e-7m-3.704166-0.9260395 0.9260416 3e-7m-1.389062-3.241146-3e-7 2.778125m0.463021-3.241148 0.9260416 3e-7m0-0.9260425 2.778125 3e-7" fill="none"  stroke-width=".926048"/>
+                        </svg>
+                    </button>
+                    <button onclick="scaleBG('--')" id="scaleDown" title="scale down" class="toolbarButton element">
+                        <svg class="toolbarButtonSVG" version="1.1" viewBox="0 0 13.22917 14.55208" xmlns="http://www.w3.org/2000/svg">
+                            <g>
+                                <path d="m1.322266 1.322266v11.90625h10.58398v-11.90625z" color="#000000" stroke="none"/>
+                                <g fill="none" stroke="#000">
+                                 <path d="m2.645833 12.56771h7.937502" stop-color="#000000" stroke-opacity=".6" stroke-width="1.32292" style="font-variation-settings:normal"/>
+                                 <path d="m11.90625 13.89063h-10.58334m11.24479-12.56771v11.90625m-0.661457-12.56771h-10.58334m-0.6614587 0.6614582v11.90625" stop-color="#000000" stroke-width="1.32292" style="font-variation-settings:normal"/>
+                                 <path class="UnoptimicedTransforms" transform="matrix(-.25 0 0 .25 12.23698 12.40235)" d="m1.322917 0.6614584h5.291667m37.04167 0h-5.291667" stop-color="#000000" stroke-opacity=".8" stroke-width="5.29168" style="font-variation-settings:normal"/>
+                                 <path class="UnoptimicedTransforms" transform="matrix(-.25 0 0 .25 12.23698 11.07943)" d="m1.322917 0.6614584h5.291667m-5.291667-37.04167h5.291667m37.04167 37.04167h-5.291667m5.291667-37.04167h-5.291667" stop-color="#000000" stroke-opacity=".4" stroke-width="5.29168" style="font-variation-settings:normal"/>
+                                </g>
+                               </g>
+                            <path d="m8.466667 8.929691 0.9260416 3e-7m1e-7 0.9260414 0.9260412 3e-7m-5.55625-3.70417 2.778125 3e-7m1.389066-1.38906-3e-7 2.778125m-1.389066-3.241148 0.9260416 3e-7m-0.9260416 3.704169 0.9260416 3e-7m-3.704167 0.9260389 2.778125 3e-7m-3.704166-0.9260395 0.9260416 3e-7m-1.389062-3.241146-3e-7 2.778125m0.463021-3.241148 0.9260416 3e-7m0-0.9260425 2.778125 3e-7" fill="none"  stroke-width=".926048"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="subtoolbox">
+                    <button onclick="setDarkMode()" id="darkmode" title="dark mode" class="toolbarButton element" class="buttonSVG">
+                        <svg class="toolbarButtonSVG" version="1.1" viewBox="0 0 13.22917 14.55208" xmlns="http://www.w3.org/2000/svg">
+                            <g>
+                                <path d="m1.322266 1.322266v11.90625h10.58398v-11.90625z" color="#000000" stroke="none"/>
+                                <g fill="none" stroke="#000">
+                                    <path d="m2.645833 12.56771h7.937502" stop-color="#000000" stroke-opacity=".6" stroke-width="1.32292" style="font-variation-settings:normal"/>
+                                    <path d="m11.90625 13.89063h-10.58334m11.24479-12.56771v11.90625m-0.661457-12.56771h-10.58334m-0.6614587 0.6614582v11.90625" stop-color="#000000" stroke-width="1.32292" style="font-variation-settings:normal"/>
+                                    <path class="UnoptimicedTransforms" transform="matrix(-.25 0 0 .25 12.23698 12.40235)" d="m1.322917 0.6614584h5.291667m37.04167 0h-5.291667" stop-color="#000000" stroke-opacity=".8" stroke-width="5.29168" style="font-variation-settings:normal"/>
+                                    <path class="UnoptimicedTransforms" transform="matrix(-.25 0 0 .25 12.23698 11.07943)" d="m1.322917 0.6614584h5.291667m-5.291667-37.04167h5.291667m37.04167 37.04167h-5.291667m5.291667-37.04167h-5.291667" stop-color="#000000" stroke-opacity=".4" stroke-width="5.29168" style="font-variation-settings:normal"/>
+                                </g>
+                            </g>
+                        </svg>
+                    </button>
+                    <button onclick="" id="" title="" class="toolbarButton element buttonSVG">
+                        <svg class="toolbarButtonSVG" version="1.1" viewBox="0 0 13.22917 14.55208" xmlns="http://www.w3.org/2000/svg">
+                            <g>
+                                <path d="m1.322266 1.322266v11.90625h10.58398v-11.90625z" color="#000000" stroke="none"/>
+                                <g fill="none" stroke="#000">
+                                    <path d="m2.645833 12.56771h7.937502" stop-color="#000000" stroke-opacity=".6" stroke-width="1.32292" style="font-variation-settings:normal"/>
+                                    <path d="m11.90625 13.89063h-10.58334m11.24479-12.56771v11.90625m-0.661457-12.56771h-10.58334m-0.6614587 0.6614582v11.90625" stop-color="#000000" stroke-width="1.32292" style="font-variation-settings:normal"/>
+                                    <path class="UnoptimicedTransforms" transform="matrix(-.25 0 0 .25 12.23698 12.40235)" d="m1.322917 0.6614584h5.291667m37.04167 0h-5.291667" stop-color="#000000" stroke-opacity=".8" stroke-width="5.29168" style="font-variation-settings:normal"/>
+                                    <path class="UnoptimicedTransforms" transform="matrix(-.25 0 0 .25 12.23698 11.07943)" d="m1.322917 0.6614584h5.291667m-5.291667-37.04167h5.291667m37.04167 37.04167h-5.291667m5.291667-37.04167h-5.291667" stop-color="#000000" stroke-opacity=".4" stroke-width="5.29168" style="font-variation-settings:normal"/>
+                                </g>
+                            </g>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div id="canvasAreaBorder" class="canvasAreaBorder">
+                <div id="canvasArea" class="canvasArea field">
+                    <div class="canvas" id="canvas"></div>
+                </div>
             </div>
             
         </main>
+        <script type="text/javascript" src="pixelwords.js" charset="utf-8"></script>
         <script>
+            //const body = document.getElementsByTagName('body')[0]
             const canvas  = document.getElementById('canvas')
             const palette = document.getElementById('palette')
             const textBox = document.getElementById('textBox')

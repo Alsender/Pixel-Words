@@ -10,6 +10,23 @@ var tense
 
 var hovered = []
 
+// LIGHT MODE DARK MODE
+
+var darkMode
+
+function setDarkMode() {
+    document.body.classList.toggle('darkmode')
+    boxes = document.querySelectorAll('.box')
+    boxes.forEach(box => {
+        box.classList.toggle('darkmode')
+    })
+    canvas.classList.toggle('darkmode')
+    fields = document.querySelectorAll('.field')
+    fields.forEach(field => {
+        field.classList.toggle('darkmode')
+    })
+}
+
 // SETTINGS BUTTONS
 
 function loadFromURL() {
@@ -109,13 +126,12 @@ function moveBGHorz(mod) {
     if (mod === '--') {horzPos--}
     canvas.style.setProperty('--horz', horzPos + '%')
 }
-
 function expand(target) {
     var content = target.nextElementSibling
-    if (content.style.display === "block") {
+    if (content.style.display === "flex") {
         content.style.display = "none"
     } else {
-        content.style.display = "block"
+        content.style.display = "flex"
 
     }
 }
@@ -294,7 +310,6 @@ function randomize(vrb){
         tenseField.innerHTML = tenses[t][1]
         contextField.innerHTML = tenses[t][2]
         textBox.placeholder = tenses[t][0].replace('[prs]',prn)
-        hintButton.title = conjugate(v, ...Object.values(verbs[verb]),person,tense)
         var hint = Object.values(verbs[verb])
         hintverb.innerHTML = verb
         hintenglish.innerHTML = hint[0]
