@@ -1,8 +1,9 @@
-var toBePainted = []
-var toBeUndone = []
-var counter = 0
-var backgroundColor = "#fffaf0"
-var mode = 'pencil'
+//var toBePainted = []
+//var toBeUndone = []
+//var counter = 0
+//var backgroundColor = "#fffaf0"
+let lang
+let mode = 'pencil'
 
 var verb
 var person
@@ -10,15 +11,458 @@ var tense
 
 var hovered = []
 
-// LIGHT MODE DARK MODE
+// Set up canvas
+function setUpCanvas() {
+    let pxls = 32
 
-var darkMode
+    // set the little canvas height and width to the amount of pixels
+    cvs.width = pxls
+    cvs.height = pxls
 
+    // set the big canvas height and width to an upscaled version
+    canvas.width = pxls * 4
+    canvas.height = pxls * 4
+
+
+    // set up the guide grid and match to pixels
+    for (let i = 0; i < pxls ** 2; i++) {
+        cell = document.createElement('div')
+        guide.appendChild(cell)
+    }
+    guide.style.gridTemplateColumns = `repeat(${pxls}, 1fr)`
+    guide.style.gridTemplateRows = `repeat(${pxls}, 1fr)`
+}
+
+let img = new Image
+let source = cvs.toDataURL()
+
+// Handle the canvas mouse movements
+
+function handleCanvasMousedown(e) {
+    e.preventDefault()
+
+    // get big canvas x and y
+    let trueRatio = canvas.getBoundingClientRect().width / cvs.width
+    let mouseX = Math.floor(e.offsetX / trueRatio)
+    let mouseY = Math.floor(e.offsetY / trueRatio)
+
+    switch (mode) {
+        case 'pan' : pan(e); break
+        case 'pencil' : pencil(mouseX, mouseY); break
+        case 'eraser' : clearCell(mouseX, mouseY); break
+        case 'eyedropper' : chooseColor(document.getElementById(getCellColor(mouseX, mouseY))); break
+        case 'changeBackground' : break
+        case 'zoom' : scaleCanvas(e); break
+    }
+}
+
+// Saving and loading functionality
+function loadVariablesFromLocalStorage() {
+    source = localStorage.getItem('cvs')
+    
+    switch (localStorage.getItem('darkMode')) {
+        case 'true' : darkMode = true; setDarkMode(); break
+        case 'false': darkMode = false; break
+        default : darkMode = false
+    }
+
+    switch (localStorage.getItem('lang')) {
+        case 'en' : lang = [en]; break
+        case 'de' : lang = [de]; break
+        default : lang = [en]
+    }
+
+    let cellStackString = localStorage.getItem('cellStack')
+    let cellHistoryString = localStorage.getItem('cellHistory')
+
+    if (cellStackString != null) cellStack = JSON.parse(cellStackString)
+    if (cellHistoryString != null) cellHistory = JSON.parse(cellHistoryString)
+}
+function saveVariablesToLocalStorage() {
+    localStorage.setItem('cellStack', JSON.stringify(cellStack))
+    localStorage.setItem('cellHistory', JSON.stringify(cellHistory))
+
+    localStorage.setItem('darkMode', darkMode)
+
+    switch (lang[0].name) {
+        case 'english' : localStorage.setItem('lang', 'en'); break
+        case 'german' : localStorage.setItem('lang', 'de'); break
+    }
+
+    localStorage.setItem('cvs', cvs.toDataURL())
+}
+
+// Set up context box
+function setUpContent() {
+    let sidebar = document.getElementById('sidebar')
+    let personClue, verbClue, tenseClue, contextClue
+    switch (lang[0].name) {
+        case 'english' : personClue = '"who: "'; verbClue = '"what: "'; tenseClue = '"when: "'; contextClue = '"how: "'; break
+        case 'german' : personClue = '"wer: "'; verbClue = '"was: "'; tenseClue = '"wenn: "'; contextClue = '"wie: "'; break
+    }
+    sidebar.style.setProperty('--person', personClue)
+    sidebar.style.setProperty('--verb', verbClue)
+    sidebar.style.setProperty('--tense', tenseClue)
+    sidebar.style.setProperty('--context', contextClue)
+}
+
+// Popup Window Functions
+
+function createWindow(id) {
+    let popupWindow = document.createElement('div')
+    document.body.appendChild(popupWindow)
+    popupWindow.id = id
+    popupWindow.className = 'window outsetBorder'
+    if (darkMode) popupWindow.classList.add('darkmode')
+    popupWindow.classList.add(id)
+    popupWindow.onmousedown = dragWindow
+
+    // create the reference window close button
+    let closeButton = document.createElement('button')
+    popupWindow.appendChild(closeButton)
+    closeButton.id = 'closeButton'
+    closeButton.innerHTML = '&times;'
+
+    // start event listener for when the close button is clicked
+    closeButton.onmousedown = function() {closeRef(window.event.target)}
+
+    //create the popup window content area
+
+    let contentArea = document.createElement('div')
+    popupWindow.appendChild(contentArea)
+    contentArea.className = 'contentArea'
+
+    return id = {
+        popupWindowKey : popupWindow,
+        closeButtonKey : closeButton,
+        contentAreaKey : contentArea
+    }
+}
+
+function createURLPromptWindow() {
+    let e = createWindow('promptURL')
+
+    let promptURLInputWrapper = document.createElement('div')
+    e.contentAreaKey.appendChild(promptURLInputWrapper)
+    promptURLInputWrapper.className = 'text insetBorder'
+    if (darkMode) promptURLInputWrapper.classList.add('darkmode')
+
+
+    let promptURLInput = document.createElement('input')
+    promptURLInputWrapper.appendChild(promptURLInput)
+    promptURLInput.id = 'promptURLInput'
+    promptURLInput.className = 'text'
+    promptURLInput.placeholder = 'Paste an image URL here!'
+
+    promptURLInput.onkeyup = loadFromURL
+}
+
+// Load reference image from URL
+function loadFromURL() {
+
+    // if key is not 'enter' don't do anything
+    if (window.event.keyCode != 13) return
+
+    // get the image link, or 
+    let imageLink = promptURLInput.value
+    if (!imageLink) imageLink = 'https://openseauserdata.com/files/4b507ea31a058216e79455493232b40a.jpg'
+    closeRef(window.event.target.parentNode.parentNode)
+    createRefWindow()
+    reference.setAttribute("src", imageLink)
+}
+
+// Reference window handlers
+function createRefWindow(imageLink) {
+
+    let e = createWindow('referenceWindow')
+    let contentArea = e.contentAreaKey
+
+    // create the reference window canvas area container
+    let referenceAreaWrapper = document.createElement('div')
+    contentArea.appendChild(referenceAreaWrapper)
+    referenceAreaWrapper.className = 'field insetBorder'
+
+    referenceArea = document.createElement('div')
+    referenceAreaWrapper.appendChild(referenceArea)
+    referenceArea.id = 'referenceArea'
+    referenceArea.className = 'overflow'
+
+    // create the reference window image
+    reference = document.createElement('img')
+    referenceArea.appendChild(reference)
+    reference.id = 'reference'
+    reference.addEventListener("mousedown", handleReferenceImgMousedown)
+}
+function dragWindow(e) {
+
+    // get a list of all windows onscreen
+    let windows = document.querySelectorAll('.window')
+    let isWindow
+
+    //check target against list to see if it is a window
+    windows.forEach(element =>  {
+        if (e.target === element) isWindow = true 
+    })
+
+    //if not a window, don't do anything
+    if (!isWindow) return
+
+    e = e || window.event
+
+    //prevent highlighting while dragging the window
+    e.preventDefault()
+
+    let shiftX = e.clientX - e.target.getBoundingClientRect().left
+    let shiftY = e.clientY - e.target.getBoundingClientRect().top
+
+    e.target.style.position = 'absolute'
+    e.target.style.zIndex = 1000
+    function moveAt(pageX, pageY) {
+        e.target.style.left = pageX - shiftX + 'px'
+        e.target.style.top = pageY - shiftY + 'px'
+    }
+    moveAt(e.pageX, e.pageY)
+    function onMouseMove(event) {
+        moveAt(event.pageX, event.pageY)
+    }
+    document.addEventListener('mousemove', onMouseMove)
+    e.target.onmouseup = function() {
+        document.removeEventListener('mousemove', onMouseMove)
+        e.target.onmouseup = null
+    }
+}
+function closeRef(target) {
+    target.parentNode.remove()
+}
+function handleReferenceImgMousedown(e) {
+    e.preventDefault()
+
+    switch (mode) {
+        case 'zoom' : scaleCanvas(e)
+    }
+}
+
+// Pencil tool -- Highlight the cells to be confirmed
+let cellStack = {}      // This is where I keep the highlighted cells waiting to be colored
+let cellHistory = {}    // This is where I keep a list of all the cells that have been colored
+
+function pencil(x, y) {
+
+    // check if cell has already been colored with the same color
+    if (getCellColor(x, y) === chosenColor) return
+
+    // check if cell has already been highlighted and if so, remove the highlight
+    if (cellStack[`${x}_${y}`]) {
+        clearCell(x, y)
+        return
+    }
+
+    // Check if we've already placed three cells
+    if (Object.keys(cellStack).length === 3) {textBox.focus(); return}
+
+    addToCellStack(x, y)
+    
+    // Fill cells with a transparent color version of the selected color
+    ctx.fillStyle = chosenColor + 50
+    ctx.fillRect(x, y, 1, 1)
+    source = cvs.toDataURL()
+    renderImage()
+    
+    // Get a verb, person, tense, and context on the first highlighted cell
+    if (Object.keys(cellStack).length === 1) randomize()
+    if (Object.keys(cellStack).length > 2) textBox.focus()
+}
+
+// Manage our cell stack object to track our three selected cells
+function addToCellStack(x, y) {
+    cellStack[`${x}_${y}`] = {
+        x : x,
+        y : y,
+        color : chosenColor
+    }
+    //localStorage.setItem('cellStack', JSON.stringify(cellStack))
+}
+function removeFromCellStack(x, y) {
+    delete cellStack[`${x}_${y}`]
+    //localStorage.setItem('cellStack', JSON.stringify(cellStack))
+}
+
+// Manage cell history
+function addToCellHistory(x, y, color) {
+    cellHistory[`${x}_${y}`] = {
+        x : x,
+        y : y,
+        color : color
+    }
+    //localStorage.setItem('cellHistory', JSON.stringify(cellHistory))
+}
+function removeFromCellHistory(x, y) {
+    delete cellHistory[`${x}_${y}`]
+    //localStorage.setItem('cellHistory', JSON.stringify(cellHistory))
+}
+
+// Confirm the cell after user correctly conjugates verb
+function confirmCell() {
+
+    Object.keys(cellStack).forEach(key => {
+
+        let x = cellStack[key].x
+        let y = cellStack[key].y
+        let color = cellStack[key].color
+
+        addToCellHistory(x, y, color)
+        removeFromCellStack(x, y)
+
+        ctx.fillStyle = color
+        ctx.fillRect(x, y, 1, 1)
+        source = cvs.toDataURL()
+        renderImage()
+    })
+}
+
+// Clears the cell
+function clearCell(x, y) {
+
+    removeFromCellStack(x, y)
+    removeFromCellHistory(x, y)
+    
+    ctx.clearRect(x, y, 1, 1)
+    source = cvs.toDataURL()
+    renderImage()
+}
+
+// Gets cell color from cellHistory
+function getCellColor(x, y) {
+    if (cellHistory[`${x}_${y}`] === undefined) return
+    return cellHistory[`${x}_${y}`].color
+}
+
+// Renders the hidden canvas onto the onscreen canvas
+function renderImage() {
+    img.src = source
+    img.onload = () => {
+        context.clearRect(0, 0, canvas.width, canvas.height)
+        drawCanvas()
+    }
+}
+
+function drawCanvas() {
+    context.imageSmoothingEnabled = false
+    context.drawImage(img, 0, 0, canvas.width, canvas.height)
+}
+
+function loadCanvas() {
+    img.src = source
+    ctx.clearRect(img, 0, 0, cvs.width, cvs.height)
+    ctx.drawImage(img, 0, 0, cvs.width, cvs.height)
+    renderImage()
+}
+
+// Change canvas background color
+function changeBackgroundColor(target) {
+    backgroundColor = target.id
+    canvas.style.backgroundColor = backgroundColor
+}
+
+// Switch between tool types
+function toolHandler(tool) {
+    mode = tool
+}
+
+// pan handler
+function pan(e) {
+
+    let target = e.target.parentElement.parentElement
+    let left = target.scrollLeft
+    let top = target.scrollTop
+    let mouseX = e.clientX
+    let mouseY = e.clientY
+
+    function onMouseMove(e) {
+        let dx = e.clientX - mouseX
+        let dy = e.clientY - mouseY
+
+        target.scrollLeft = left - dx
+        target.scrollTop = top - dy
+    }
+    function onMouseUp(e) {
+        document.removeEventListener('mousemove', onMouseMove)
+        document.removeEventListener('mouseup', onMouseUp)
+    }
+    document.addEventListener('mousemove', onMouseMove)
+    document.addEventListener('mouseup', onMouseUp)
+}
+
+// clear the canvas
+function clearCanvas() {
+    ctx.clearRect(0, 0, cvs.height, cvs.width)
+    source = cvs.toDataURL()
+    renderImage()
+    Object.keys(cellStack).forEach(key => {
+        let x = cellStack[key].x
+        let y = cellStack[key].y
+        removeFromCellStack(x, y)
+    })
+    Object.keys(cellHistory).forEach(key => {
+        let x = cellHistory[key].x
+        let y = cellHistory[key].y
+        removeFromCellHistory(x, y)
+    })
+}
+
+// adjust the zoom on both the main canvas and the reference canvas
+function scaleCanvas(e) {
+
+    // get the canvas clicked on
+    let target = e.target
+    if (target === canvas) target = canvasWrapper
+    let tarWidth
+    let tarHeight
+
+    // Zoom in
+    if (!e.ctrlKey) {
+        tarWidth = target.getBoundingClientRect().width * 1.1       // multiply the onscreen target width by 110%
+        tarHeight = target.getBoundingClientRect().height * 1.1     // multiply the onscreen target height by 110%
+    }
+
+    // zoom out if the control key is pressed
+    if (e.ctrlKey) {
+        tarWidth = target.getBoundingClientRect().width * 0.9
+        tarHeight = target.getBoundingClientRect().height * 0.9
+    }
+
+    target.style.maxWidth = 'none'
+    target.style.maxHeight = 'none'
+    target.style.width = `${tarWidth}px`
+    target.style.height = `${tarHeight}px`
+
+    if (target === canvasWrapper) {
+        guide.style.width = `${tarWidth}px`
+        guide.style.height = `${tarHeight}px`
+    }
+}
+
+// Light mode / Dark mode setting
+let darkMode
+
+function toggleDarkMode() {
+    darkMode = darkMode ? false : true
+    setDarkMode()
+}
 function setDarkMode() {
+
     document.body.classList.toggle('darkmode')
-    boxes = document.querySelectorAll('.box')
-    boxes.forEach(box => {
-        box.classList.toggle('darkmode')
+    windows = document.querySelectorAll('.window')
+    windows.forEach(win => {
+        win.classList.toggle('darkmode')
+    })
+    containers = document.querySelectorAll('.container')
+    containers.forEach(container => {
+        container.classList.toggle('darkmode')
+    })
+    texts = document.querySelectorAll('.text')
+    texts.forEach(text => {
+        text.classList.toggle('darkmode')
     })
     canvas.classList.toggle('darkmode')
     fields = document.querySelectorAll('.field')
@@ -27,107 +471,28 @@ function setDarkMode() {
     })
 }
 
-// SETTINGS BUTTONS
+// Change the language
 
-function loadFromURL() {
-    let imageLink = prompt("","enter a URL here")
-    createRefWindow()
-    reference.setAttribute("src", imageLink)
+function changeLang() {
+    switch(lang[0].name) {
+        case 'german' : lang = [en]; /*localStorage.setItem('lang', 'en');*/ break
+        case 'english' : lang = [de]; /*localStorage.setItem('lang', 'de');*/ break
+    }
+    loadLang()
+    setUpContent()
 }
-function createRefWindow() {
-    referenceWindow = document.createElement("div")
-    canvasArea.appendChild(referenceWindow)
-    referenceWindow.id = 'referenceWindow'
-    referenceWindow.onmousedown = function() {dragWindow(event)}
-    referenceWindow.ondragstart = function() {return false}
 
-    closeButton = document.createElement('button')
-    referenceWindow.appendChild(closeButton)
-    closeButton.id = 'closeButton'
-    closeButton.onmousedown = function() {closeRef(event)}
+function loadLang() {
+    switch(lang[0].name) {
+        case 'german' : lang = [de]; break
+        default : lang = [en]; break
+    }
+    if (cellStack.length > 0) randomize()
+}
 
-    referenceArea = document.createElement('div')
-    referenceWindow.appendChild(referenceArea)
-    referenceArea.id = 'referenceArea'
-
-    reference = document.createElement('img')
-    referenceWindow.appendChild(reference)
-    reference.id = 'reference'
-}
-function dragWindow(event) {
-    let shiftX = event.clientX - event.target.getBoundingClientRect().left
-    let shiftY = event.clientY - event.target.getBoundingClientRect().top
-
-    event.target.style.position = 'absolute'
-    event.target.style.zIndex = 1000
-    function moveAt(pageX, pageY) {
-        event.target.style.left = pageX - shiftX + 'px'
-        event.target.style.top = pageY - shiftY + 'px'
-    }
-    moveAt(event.pageX, event.pageY)
-    function onMouseMove(event) {
-        moveAt(event.pageX, event.pageY)
-    }
-    document.addEventListener('mousemove', onMouseMove)
-    referenceWindow.onmouseup = function() {
-        document.removeEventListener('mousemove', onMouseMove)
-        referenceWindow.onmouseup = null
-    }
-}
-function closeRef(event) {
-    event.target.parentNode.remove()
-}
-function clearReference() {
-    canvas.style.removeProperty("background-image")
-    canvas.style.backgroundColor = backgroundColor
-}
-function changeBackgroundColor(target) {
-    backgroundColor = target.id
-    canvas.style.backgroundColor = backgroundColor
-}
-function toolHandler(tool) {
-    mode = tool
-}
-function load() {
-    for (i = 0; i < 32*32; i++) {
-        document.getElementById(i).style.backgroundColor = localStorage[i]
-        document.getElementById(i).dataset.color = localStorage[i]
-    }
-}
-function save() {
-    for (i = 0; i < 32*32; i++) {
-        if (document.getElementById(i).dataset.color != undefined) {
-            localStorage[i] = document.getElementById(i).dataset.color
-        }
-    }
-}
-function clearCanvas() {
-    for (i = 0; i < 32*32; i++) {
-        document.getElementById(i).removeAttribute('data-color')
-        document.getElementById(i).style.removeProperty('background-color')
-        localStorage.removeItem(i)
-    }
-}
-function scaleBG(mod) {
-    let scale = getComputedStyle(canvas).getPropertyValue('--scale').slice(0, -1)
-    if (mod === '++') {scale++}
-    if (mod === '--') {scale--}
-    canvas.style.setProperty("--scale", scale + '%')
-}
-function moveBGVert(mod) {
-    let vertPos = getComputedStyle(canvas).getPropertyValue('--vert').slice(0, -1)
-    if (mod === '++') {vertPos++}
-    if (mod === '--') {vertPos--}
-    canvas.style.setProperty('--vert', vertPos + '%')
-}
-function moveBGHorz(mod) {
-    let horzPos = getComputedStyle(canvas).getPropertyValue('--horz').slice(0, -1)
-    if (mod === '++') {horzPos++}
-    if (mod === '--') {horzPos--}
-    canvas.style.setProperty('--horz', horzPos + '%')
-}
+// Expand and contract the hintbox
 function expand(target) {
-    var content = target.nextElementSibling
+    let content = target.nextElementSibling
     if (content.style.display === "flex") {
         content.style.display = "none"
     } else {
@@ -136,7 +501,7 @@ function expand(target) {
     }
 }
 
-//KEY / MOUSE FUNCTIONALITY
+// Key and mouse functionality
 
 function hover(target) {
     hovered.push(target)
@@ -146,14 +511,7 @@ function hover(target) {
     }
     hovered[0].classList.toggle('hovered')
 }
-function canvasMousedown() {
-    switch (mode) {
-        case 'pencil' : paint(); break;
-        case 'eraser' : erase(); break;
-        case 'eyedropper': chooseColor(document.getElementById(hovered[0].dataset.color)); break; 
-        case 'changeBackground': break;
-    }
-}
+
 function paletteMousedown(target) {
     switch (mode) {
         case 'pencil' :
@@ -162,21 +520,23 @@ function paletteMousedown(target) {
         case 'changeBackground': changeBackgroundColor(target); break;
     }
 }
-function keyup(event) {
-    switch (event.keyCode) {
-        case 90 : if (event.ctrlKey) undo(); break;
-        case 13 : event.preventDefault(); textBox.value != "" ? confirm() : paint(); return false;
+
+function keyup(e) {
+    switch (e.keyCode) {
+        case 90 : if (e.ctrlKey) undo(); break;
+        case 13 : e.preventDefault(); textBox.value != "" ? confirm() : pencil(); return false;
         case 46 : erase(); break;
         case 37 : 
         case 38 :
         case 39 :
         case 40 :
-            event.ctrlKey ? arrowKeyPaintHandler(event) : arrowKeyPixelHandler(event);
+            e.ctrlKey ? arrowKeyPaintHandler(e) : arrowKeyPixelHandler(e);
         default : return
     }
 }
+
 function arrowKeyPixelHandler(event) {
-    if (counter === 3) {return}
+    if (Object.keys(cellStack).length === 3) return
     else
     event.preventDefault()
     let hoveredID = hovered[0].id
@@ -195,6 +555,7 @@ function arrowKeyPixelHandler(event) {
         } break
     }
 }
+
 function arrowKeyPaintHandler(event) {
     event.preventDefault()
     let chosenColorID = document.querySelectorAll('.activeColor')[0].id.substring(5)
@@ -224,44 +585,19 @@ function chooseColor(target) {
 function eyedropper() {
     chosenColor = hovered[0].dataset.color
 }
-function paint() {
-    for (i = 0; i < toBePainted.length; i++) {
-        if (hovered[0] === toBePainted[i]) {
-            remove(hovered[0])
-            return
-        }
-    }
-    switch (counter) {
-        case 0 : randomize()
-        case 1 :
-        case 2 : {
-            if (chosenColor != undefined) {
-                toBePainted.push(hovered[0])
-                hovered[0].dataset.color = chosenColor
-                hovered[0].style.backgroundColor = chosenColor+50
-                counter++
-                toBeUndone.push(hovered[0])
-                if (counter === 3) {textBox.focus()}
-            }
-        }
-        case 3 : break;
-    }
-}
+
 function confirm() {
-    let checks = conjugate(verb, ...Object.values(verbs[verb]),person,tense).split(",")
+    let checks = lang[0].conjugate(...Object.values(lang[0].verbs[verb]),person,tense[0]).split(",")
     let check = ''
     for (i=0;i<checks.length;i++) {
-        check = '(\\b' + checks[i].replace(/\s/g, '\\b)+[\\s/\\S]+(\\b') + '\\b)'
+        check = '(?<![\\u0080-\\uFFFF\\w])(' + checks[i].replace(/\s/g, ')(?![\\u0800-\\uFFFF])+[\\s/\\S]+(?<![\\u0080-\\uFFFF\\w])(') + ')(?![\\u0800-\\uFFFF])'
         checkExp = new RegExp(check,'g')
         console.log(checks,check)
         if (checkExp.test(textBox.value)) {
-            for (i = 0; i <= toBePainted.length - 1; i++) {
-                toBePainted[i].style.backgroundColor = toBePainted[i].dataset.color
-                localStorage.setItem(toBePainted[i].id, toBePainted[i].dataset.color)
-            }
-            toBePainted = []
-            toBeUndone = []
-            counter = 0
+            confirmCell()
+            //toBePainted = []
+            //toBeUndone = []
+            //counter = 0
             verbBox.placeholder = ""
             textBox.placeholder = ""
             textBox.value = ""
@@ -269,21 +605,24 @@ function confirm() {
         }
     }
 }
-function remove(target) {
-    for (i = 0; i < toBePainted.length; i++) {
-        if (target === toBePainted[i]) {
-            counter--
-            toBePainted.splice(i, 1)
-            target.removeAttribute('data-color')
-            target.style.removeProperty('background-color')
-        }
-    }
-    return
-}
+
 function undo() {
+    
+    let stackCells = Object.keys(cellStack)
+    let historyCells = Object.keys(cellHistory)
+
+    if (stackCells.length) {
+        let lastCell = stackCells[stackCells.length - 1]
+        clearCell(cellStack[lastCell].x, cellStack[lastCell].y)
+    } else if (historyCells.length) {
+        let lastCell = historyCells[historyCells.length -1]
+        clearCell(cellHistory[lastCell].x, cellHistory[lastCell].y)
+    } else return
+/*
     target = toBeUndone[toBeUndone.length - 1]
     toBeUndone.splice(toBeUndone.length - 1, 1)
     remove(target)
+*/
 }
 function erase() {
     hovered[0].removeAttribute('data-color')
@@ -291,15 +630,15 @@ function erase() {
     localStorage.removeItem(hovered[0].id)
 }
 function randomize(vrb){
-    if (vrb === undefined) v = Object.keys(verbs)[Math.floor(Math.random() * Object.keys(verbs).length)]
-    t = randomTense()
-    p = Object.keys(persons)[Math.floor(Math.random() * Object.keys(persons).length)]
-    switch (p) {
-        case 'thirdSg': prn = Object.values(persons.thirdSg)[Math.floor(Math.random() * 2)]; break;
-        case 'thirdPl' : prn = Object.values(persons.thirdPl)[Math.floor(Math.random() * 1)]; break;
-        default : prn = persons[p]
+    if (vrb === undefined) v = lang[0].getRandomVerb()
+    t = lang[0].getRandomTense()
+    p = lang[0].getRandomPerson()
+    if (lang[0].persons[p][0] === undefined) {
+        prn = Object.values(lang[0].persons[p])[Math.floor(Math.random() * Object.keys(lang[0].persons[p]).length)]
+    } else {
+        prn = lang[0].persons[p]
     }
-    if (dissalloweds.some(phr => (v + " " + t).includes(phr))) {
+    if (lang[0].dissalloweds.some(phr => (v + " " + t).includes(phr))) {
         randomize(v)
     } else {
         verb = v
@@ -307,10 +646,10 @@ function randomize(vrb){
         tense = t
         personField.innerHTML = prn
         verbField.innerHTML = v
-        tenseField.innerHTML = tenses[t][1]
-        contextField.innerHTML = tenses[t][2]
-        textBox.placeholder = tenses[t][0].replace('[prs]',prn)
-        var hint = Object.values(verbs[verb])
+        tenseField.innerHTML = lang[0].tenses[t[0]][t[1]].when
+        contextField.innerHTML = lang[0].tenses[t[0]][t[1]].context
+        textBox.placeholder = lang[0].tenses[t[0]][t[1]].phrase.replace('[prs]',prn)
+        var hint = Object.values(lang[0].verbs[verb])
         hintverb.innerHTML = verb
         hintenglish.innerHTML = hint[0]
         hintpres.innerHTML = hint[2]

@@ -1,7 +1,73 @@
-<svg width="30" height="30" version="1.1" viewBox="0 0 7.9375 7.9375" xmlns="http://www.w3.org/2000/svg">
- <g fill="none" stroke-width="1.32292">
-  <path d="m5.291667 5.953127h-2.645833m3.307293-3.307293v2.645833m-0.66146-3.30729h-2.645833m-0.6614567 0.6614567v2.645833" stop-color="#000000" stroke="#000" style="font-variation-settings:normal"/>
-  <path d="m1.322917 1.984377h1.322917m2.645833 0h1.322917m-3.96875-1.322917h2.645833" stop-color="#000000" stroke="#000" stroke-opacity=".5" style="font-variation-settings:normal"/>
-  <path d="m7.276043 2.645833v3.96875m-6.614583-3.96875v3.96875m0.6614566 0.6614599h5.291667" stop-color="#000000" stroke="#fff" stroke-opacity=".3" style="font-variation-settings:normal"/>
- </g>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="30"
+   height="30"
+   version="1.1"
+   viewBox="0 0 7.9375 7.9375"
+   id="svg232"
+   sodipodi:docname="border.svg"
+   inkscape:version="1.2 (dc2aedaf03, 2022-05-15)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs236" />
+  <sodipodi:namedview
+     id="namedview234"
+     pagecolor="#804040"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="false"
+     inkscape:zoom="29.092889"
+     inkscape:cx="14.127164"
+     inkscape:cy="15.003666"
+     inkscape:window-width="1920"
+     inkscape:window-height="1191"
+     inkscape:window-x="-9"
+     inkscape:window-y="-9"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg232" />
+  <path
+     d="M 5.291667,5.953127 H 2.645834 M 5.953127,2.645834 V 5.291667 M 5.291667,1.984377 H 2.645834 M 1.9843773,2.6458337 v 2.645833"
+     stop-color="#000000"
+     stroke="#000000"
+     style="font-variation-settings:normal;fill:none;stroke-width:1.32292;stroke:#000000;stroke-opacity:1"
+     id="path224" />
+  <path
+     style="font-variation-settings:normal;fill:none;stroke:#000000;stroke-width:1.32289;stroke-opacity:0.5"
+     d="M 1.3229165,1.9843766 H 2.6458332"
+     id="path5270" />
+  <path
+     style="font-variation-settings:normal;fill:none;stroke:#ffffff;stroke-width:1.32292;stroke-opacity:0.3"
+     d="M 2.6458331,7.2760433 H 5.2916665"
+     id="path16893" />
+  <path
+     style="font-variation-settings:normal;fill:none;stroke:#ffffff;stroke-width:1.32292;stroke-opacity:0.3"
+     d="M 0.66146001,2.6458333 V 5.2916666"
+     id="path16891" />
+  <path
+     style="font-variation-settings:normal;fill:none;stroke:#ffffff;stroke-width:1.32292;stroke-opacity:0.3"
+     d="M 7.2760416,2.6458332 V 5.2916666"
+     id="path228" />
+  <path
+     style="font-variation-settings:normal;fill:none;stroke:#000000;stroke-width:1.32289;stroke-opacity:0.5"
+     d="M 2.6458334,0.66144501 H 5.2916667"
+     id="path16159" />
+  <path
+     style="font-variation-settings:normal;fill:none;stroke:#000000;stroke-width:1.32289;stroke-opacity:0.5"
+     d="M 5.291666,1.9843766 H 6.6145827"
+     id="path16161" />
+  <path
+     style="font-variation-settings:normal;fill:none;stroke:#ffffff;stroke-width:1.32292;stroke-opacity:0.3"
+     d="M 1.3229168,5.953127 H 2.6458336"
+     id="path17621" />
+  <path
+     style="font-variation-settings:normal;fill:none;stroke:#ffffff;stroke-width:1.32292;stroke-opacity:0.3"
+     d="M 5.2916663,5.953127 H 6.6145831"
+     id="path17623" />
 </svg>
