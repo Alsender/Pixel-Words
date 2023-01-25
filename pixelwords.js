@@ -1,13 +1,11 @@
-//var toBePainted = []
-//var toBeUndone = []
-//var counter = 0
-//var backgroundColor = "#fffaf0"
 let lang
 let mode = 'pencil'
 
-var verb
-var person
-var tense
+var verbContext = {}
+
+//var verb
+//var person
+//var tense
 
 var hovered = []
 
@@ -45,7 +43,8 @@ function handleCanvasMousedown(e) {
     let trueRatio = canvas.getBoundingClientRect().width / cvs.width
     let mouseX = Math.floor(e.offsetX / trueRatio)
     let mouseY = Math.floor(e.offsetY / trueRatio)
-
+    
+    // determin action based on the active tool
     switch (mode) {
         case 'pan' : pan(e); break
         case 'pencil' : pencil(mouseX, mouseY); break
@@ -58,48 +57,59 @@ function handleCanvasMousedown(e) {
 
 // Saving and loading functionality
 function loadVariablesFromLocalStorage() {
-    source = localStorage.getItem('cvs')
-    
+
+    // load the dark mode variable
     switch (localStorage.getItem('darkMode')) {
         case 'true' : darkMode = true; setDarkMode(); break
         case 'false': darkMode = false; break
         default : darkMode = false
     }
 
+    // load the language variable
     switch (localStorage.getItem('lang')) {
         case 'en' : lang = [en]; break
         case 'de' : lang = [de]; break
         default : lang = [en]
     }
 
+    // set up stack and history strings
     let cellStackString = localStorage.getItem('cellStack')
     let cellHistoryString = localStorage.getItem('cellHistory')
 
+    // parse the strings into JSON objects
     if (cellStackString != null) cellStack = JSON.parse(cellStackString)
     if (cellHistoryString != null) cellHistory = JSON.parse(cellHistoryString)
 }
 function saveVariablesToLocalStorage() {
+
+    // save the stack and history as strings
     localStorage.setItem('cellStack', JSON.stringify(cellStack))
     localStorage.setItem('cellHistory', JSON.stringify(cellHistory))
 
+    // save dark mode
     localStorage.setItem('darkMode', darkMode)
 
+    // save the current language
     switch (lang[0].name) {
         case 'english' : localStorage.setItem('lang', 'en'); break
         case 'german' : localStorage.setItem('lang', 'de'); break
     }
-
-    localStorage.setItem('cvs', cvs.toDataURL())
 }
 
 // Set up context box
 function setUpContent() {
+
+    // set up variables
     let sidebar = document.getElementById('sidebar')
     let personClue, verbClue, tenseClue, contextClue
+
+    //depending on the language, set the variable to the correct languaeg words
     switch (lang[0].name) {
         case 'english' : personClue = '"who: "'; verbClue = '"what: "'; tenseClue = '"when: "'; contextClue = '"how: "'; break
         case 'german' : personClue = '"wer: "'; verbClue = '"was: "'; tenseClue = '"wenn: "'; contextClue = '"wie: "'; break
     }
+
+    // set the css variables
     sidebar.style.setProperty('--person', personClue)
     sidebar.style.setProperty('--verb', verbClue)
     sidebar.style.setProperty('--tense', tenseClue)
@@ -109,12 +119,13 @@ function setUpContent() {
 // Popup Window Functions
 
 function createWindow(id) {
+
+    // create the whole window, add to html body, set id, class, 
     let popupWindow = document.createElement('div')
     document.body.appendChild(popupWindow)
     popupWindow.id = id
     popupWindow.className = 'window outsetBorder'
     if (darkMode) popupWindow.classList.add('darkmode')
-    popupWindow.classList.add(id)
     popupWindow.onmousedown = dragWindow
 
     // create the reference window close button
@@ -325,6 +336,7 @@ function clearCell(x, y) {
 
     removeFromCellStack(x, y)
     removeFromCellHistory(x, y)
+    if (Object.keys(cellStack).length === 0) {verbContext = {}; populateContextBox(); deconstructHint()}
     
     ctx.clearRect(x, y, 1, 1)
     source = cvs.toDataURL()
@@ -352,10 +364,18 @@ function drawCanvas() {
 }
 
 function loadCanvas() {
-    img.src = source
-    ctx.clearRect(img, 0, 0, cvs.width, cvs.height)
-    ctx.drawImage(img, 0, 0, cvs.width, cvs.height)
+    Object.keys(cellHistory).forEach(cell => {
+        ctx.fillStyle = cellHistory[cell].color
+        ctx.fillRect(cellHistory[cell].x, cellHistory[cell].y, 1, 1)
+    })
+    Object.keys(cellStack).forEach(cell => {
+        ctx.fillStyle = cellStack[cell].color+50
+        ctx.fillRect(cellStack[cell].x, cellStack[cell].y, 1, 1)
+    })
+    source = cvs.toDataURL()
     renderImage()
+    if (Object.keys(cellStack).length != 0) randomize()
+    if (Object.keys(cellStack).length > 2) textBox.focus()
 }
 
 // Change canvas background color
@@ -475,8 +495,8 @@ function setDarkMode() {
 
 function changeLang() {
     switch(lang[0].name) {
-        case 'german' : lang = [en]; /*localStorage.setItem('lang', 'en');*/ break
-        case 'english' : lang = [de]; /*localStorage.setItem('lang', 'de');*/ break
+        case 'german' : lang = [en]; break
+        case 'english' : lang = [de]; break
     }
     loadLang()
     setUpContent()
@@ -487,7 +507,8 @@ function loadLang() {
         case 'german' : lang = [de]; break
         default : lang = [en]; break
     }
-    if (cellStack.length > 0) randomize()
+    if (Object.keys(cellStack).length != 0) randomize()
+    if (Object.keys(cellStack).length > 2) textBox.focus()
 }
 
 // Expand and contract the hintbox
@@ -587,7 +608,7 @@ function eyedropper() {
 }
 
 function confirm() {
-    let checks = lang[0].conjugate(...Object.values(lang[0].verbs[verb]),person,tense[0]).split(",")
+    let checks = lang[0].conjugate(...Object.values(lang[0].verbs[verbContext.verb]),verbContext.person,verbContext.tense[0]).split(",")
     let check = ''
     for (i=0;i<checks.length;i++) {
         check = '(?<![\\u0080-\\uFFFF\\w])(' + checks[i].replace(/\s/g, ')(?![\\u0800-\\uFFFF])+[\\s/\\S]+(?<![\\u0080-\\uFFFF\\w])(') + ')(?![\\u0800-\\uFFFF])'
@@ -595,13 +616,12 @@ function confirm() {
         console.log(checks,check)
         if (checkExp.test(textBox.value)) {
             confirmCell()
-            //toBePainted = []
-            //toBeUndone = []
-            //counter = 0
             verbBox.placeholder = ""
-            textBox.placeholder = ""
             textBox.value = ""
             textBox.blur()
+            verbContext = {}
+            populateContextBox()
+            deconstructHint()
         }
     }
 }
@@ -618,59 +638,69 @@ function undo() {
         let lastCell = historyCells[historyCells.length -1]
         clearCell(cellHistory[lastCell].x, cellHistory[lastCell].y)
     } else return
-/*
-    target = toBeUndone[toBeUndone.length - 1]
-    toBeUndone.splice(toBeUndone.length - 1, 1)
-    remove(target)
-*/
 }
 function erase() {
     hovered[0].removeAttribute('data-color')
     hovered[0].style.removeProperty('background-color')
     localStorage.removeItem(hovered[0].id)
 }
-function randomize(vrb){
-    if (vrb === undefined) v = lang[0].getRandomVerb()
-    t = lang[0].getRandomTense()
-    p = lang[0].getRandomPerson()
-    if (lang[0].persons[p][0] === undefined) {
-        prn = Object.values(lang[0].persons[p])[Math.floor(Math.random() * Object.keys(lang[0].persons[p]).length)]
-    } else {
-        prn = lang[0].persons[p]
+function randomize(vrb) {
+
+    deconstructHint()
+
+    // get random verb, tense, and person
+    verbContext.verb = lang[0].getRandomVerb()
+    verbContext.tense = lang[0].getRandomTense()
+    verbContext.person = lang[0].getRandomPerson()
+
+    verbContext.prn = lang[0].getPronoun(verbContext.person)
+
+    verbContext.when = lang[0].tenses[verbContext.tense[0]][verbContext.tense[1]].when
+    verbContext.context = lang[0].tenses[verbContext.tense[0]][verbContext.tense[1]].context
+    verbContext.phrase = lang[0].tenses[verbContext.tense[0]][verbContext.tense[1]].phrase.replace('[prs]',verbContext.prn)
+
+    checkDisalloweds()
+    
+    {
+        populateContextBox()
+
+        // construct the hint box based on the verb provided.
+        constructHint(verbContext.verb)
     }
-    if (lang[0].dissalloweds.some(phr => (v + " " + t).includes(phr))) {
-        randomize(v)
-    } else {
-        verb = v
-        person = p
-        tense = t
-        personField.innerHTML = prn
-        verbField.innerHTML = v
-        tenseField.innerHTML = lang[0].tenses[t[0]][t[1]].when
-        contextField.innerHTML = lang[0].tenses[t[0]][t[1]].context
-        textBox.placeholder = lang[0].tenses[t[0]][t[1]].phrase.replace('[prs]',prn)
-        var hint = Object.values(lang[0].verbs[verb])
-        hintverb.innerHTML = verb
-        hintenglish.innerHTML = hint[0]
-        hintpres.innerHTML = hint[2]
-        hintpast.innerHTML = hint[3]
-        hintpastPart.innerHTML = hint[4]
-        hintsubj.innerHTML = hint[5]
+
+    function checkDisalloweds() {
+        if (lang[0].dissalloweds.some(phr => (verbContext.verb + " " + verbContext.tense).includes(phr))) {
+            verbContext.tense = lang[0].getRandomTense()
+            checkDisalloweds()
+        }
+        return
     }
 }
 
-function constructHint(v) {
-    let hint = {}
-    hint[v] = {}
-    for (let t in tenses) {
-        hint[v][t] = []
-        for (let p in persons) {
-            switch (p) {
-                case 'thirdSg': for (let g in persons.thirdSg) {hint[v][t].push(persons.thirdSg[g] + " " + conjugate(v, ...Object.values(verbs[v]), p, t))}; break;
-                case 'thirdPl' : for (let g in persons.thirdPl) {hint[v][t].push(persons.thirdPl[g] + " " + conjugate(v, ...Object.values(verbs[v]), p, t))}; break;
-                default : hint[v][t].push(persons[p] + " " + conjugate(v, ...Object.values(verbs[v]), p, t))
-            }
-        }
+// set the verb context fields and the text box hint phrase
+function populateContextBox() {
+    personField.innerHTML = verbContext.prn || ''
+    verbField.innerHTML = verbContext.verb || ''
+    tenseField.innerHTML = verbContext.when || ''
+    contextField.innerHTML = verbContext.context || ''
+
+    textBox.placeholder = verbContext.phrase || ''
+}
+
+// construct the hint box content; both the elements, and the information
+function constructHint() {
+    let hintObject = {}
+    hintObject = lang[0].getPrincipleParts(verbContext.verb)
+    for (i = 0; i < Object.keys(hintObject).length; i++) {
+        hintSubBox = document.createElement('pre')
+        hintcontent.appendChild(hintSubBox)
+        hintSubBox.id = Object.keys(hintObject)[i]
+        hintSubBox.innerHTML = Object.values(hintObject)[i]
     }
-    hintcontent.innerHTML = JSON.stringify(hint, null, 1)
+}
+
+// remove and reset the hint box so that it has no elements, and returns to closed.
+function deconstructHint() {
+    hintcontent.innerHTML = ''
+    hintcontent.style.display = 'none'
 }
