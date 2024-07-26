@@ -7,49 +7,101 @@ var verbContext = {}
 //var person
 //var tense
 
-var hovered = []
+var hovered = {}
+
+let canvas  = document.getElementById('canvas') // big canvas
+let context = canvas.getContext('2d')
+
+let cvsImage = document.createElement('canvas') // image canvas
+let ctxImage = cvsImage.getContext('2d')
+
+let cvsSelected = document.createElement('canvas') // selected cells canvas
+let ctxSelected = cvsSelected.getContext('2d')
+
+let cvsHighlighted = document.createElement('canvas') // highlighted cells canvas
+let ctxHighlighted = cvsHighlighted.getContext('2d')
 
 // Set up canvas
+let pxls = {
+    width: 32,
+    height: 32
+}
 function setUpCanvas() {
-    let pxls = 32
 
-    // set the little canvas height and width to the amount of pixels
-    cvs.width = pxls
-    cvs.height = pxls
+    // set the big canvas wrapper aspect ratio
+    canvasWrapper.style.aspectRatio = `${pxls.width} / ${pxls.height}`
+    if (pxls.width / pxls.height >= 1) {
+        canvasWrapper.style.width = '95%'; canvasWrapper.style.height = 'auto'
+        guide.style.width = '95%'; guide.style.height = 'auto'
+    }
+    if (pxls.width / pxls.height < 1) {
+        canvasWrapper.style.width = 'auto'; canvasWrapper.style.height = '95%'
+        guide.style.width = 'auto'; guide.style.height = '95%'
+    }
+
+    // set the little canvases height and width to the amount of pixels
+    cvsImage.width =  cvsSelected.width = cvsHighlighted.width = pxls.width
+    cvsImage.height = cvsSelected.height = cvsHighlighted.height = pxls.height
 
     // set the big canvas height and width to an upscaled version
-    canvas.width = pxls * 4
-    canvas.height = pxls * 4
+    canvas.width = pxls.width * 4
+    canvas.height = pxls.height * 4
 
 
     // set up the guide grid and match to pixels
-    for (let i = 0; i < pxls ** 2; i++) {
+    for (let i = 0; i < pxls.width * pxls.height; i++) {
         cell = document.createElement('div')
         guide.appendChild(cell)
     }
-    guide.style.gridTemplateColumns = `repeat(${pxls}, 1fr)`
-    guide.style.gridTemplateRows = `repeat(${pxls}, 1fr)`
+    guide.style.gridTemplateColumns = `repeat(${pxls.width}, 1fr)`
+    guide.style.gridTemplateRows = `repeat(${pxls.height}, 1fr)`
+    guide.style.aspectRatio = `${pxls.width} / ${pxls.height}`
+    //guide.style.width = `${pxls.width * 4}px`
+    //guide.style.height = `${pxls.height * 4}px`
 }
 
 let img = new Image
-let source = cvs.toDataURL()
+let source = cvsImage.toDataURL()
 
 // Handle the canvas mouse movements
+
+function getXY(e) {
+    // get big canvas x and y
+    let trueRatio = canvas.getBoundingClientRect().width / cvsImage.width
+    let mouseX = Math.floor(e.offsetX / trueRatio)
+    let mouseY = Math.floor(e.offsetY / trueRatio)
+    return {x: mouseX, y: mouseY}
+}
+
+function handleCanvasMousemove(e) {
+    e.preventDefault()
+
+    let mouse = getXY(e)
+    if (
+        document.activeElement.nodeName === 'INPUT' ||
+        Object.keys(cellStack).length === 3
+    ) clearHover()
+    else switch (mode) {
+        case 'pan' : break
+        case 'pencil' :
+        case 'eraser' :
+        case 'eyedropper' : hover(mouse.x, mouse.y); break
+        case 'changeBackground' : break
+        case 'zoom' : break
+    }
+}
 
 function handleCanvasMousedown(e) {
     e.preventDefault()
 
-    // get big canvas x and y
-    let trueRatio = canvas.getBoundingClientRect().width / cvs.width
-    let mouseX = Math.floor(e.offsetX / trueRatio)
-    let mouseY = Math.floor(e.offsetY / trueRatio)
+    let mouse = getXY(e)
     
-    // determin action based on the active tool
+    // determine action based on the active tool
     switch (mode) {
         case 'pan' : pan(e); break
-        case 'pencil' : pencil(mouseX, mouseY); break
-        case 'eraser' : clearCell(mouseX, mouseY); break
-        case 'eyedropper' : chooseColor(document.getElementById(getCellColor(mouseX, mouseY))); break
+        case 'pencil' : pencil(mouse.x, mouse.y); break
+        case 'eraser' : clearCell(mouse.x, mouse.y); break
+        case 'eyedropper' : chooseColor(document.getElementById(getCellColor(mouse.x, mouse.y))); break
         case 'changeBackground' : break
         case 'zoom' : scaleCanvas(e); break
     }
@@ -69,6 +121,7 @@ function loadVariablesFromLocalStorage() {
     switch (localStorage.getItem('lang')) {
         case 'en' : lang = [en]; break
         case 'de' : lang = [de]; break
+        case 'fr' : lang = [fr]; break
         default : lang = [en]
     }
 
@@ -93,6 +146,7 @@ function saveVariablesToLocalStorage() {
     switch (lang[0].name) {
         case 'english' : localStorage.setItem('lang', 'en'); break
         case 'german' : localStorage.setItem('lang', 'de'); break
+        case 'french' : localStorage.setItem('lang', 'fr'); break
     }
 }
 
@@ -107,6 +161,7 @@ function setUpContent() {
     switch (lang[0].name) {
         case 'english' : personClue = '"who: "'; verbClue = '"what: "'; tenseClue = '"when: "'; contextClue = '"how: "'; break
         case 'german' : personClue = '"wer: "'; verbClue = '"was: "'; tenseClue = '"wenn: "'; contextClue = '"wie: "'; break
+        case 'french' : personClue = '"qui: "'; verbClue = '"quoi: "'; tenseClue = '"quand: "'; contextClue = '"comment: "'; break
     }
 
     // set the css variables
@@ -161,9 +216,12 @@ function createURLPromptWindow() {
 
     let promptURLInput = document.createElement('input')
     promptURLInputWrapper.appendChild(promptURLInput)
+    promptURLInput.type = 'text'
+    promptURLInput.name = 'promptURLInput'
     promptURLInput.id = 'promptURLInput'
     promptURLInput.className = 'text'
     promptURLInput.placeholder = 'Paste an image URL here!'
+    promptURLInput.focus()
 
     promptURLInput.onkeyup = loadFromURL
 }
@@ -177,6 +235,7 @@ function loadFromURL() {
     // get the image link, or 
     let imageLink = promptURLInput.value
     if (!imageLink) imageLink = 'https://openseauserdata.com/files/4b507ea31a058216e79455493232b40a.jpg'
+    promptURLInput.onkeyup = null
     closeRef(window.event.target.parentNode.parentNode)
     createRefWindow()
     reference.setAttribute("src", imageLink)
@@ -192,6 +251,7 @@ function createRefWindow(imageLink) {
     let referenceAreaWrapper = document.createElement('div')
     contentArea.appendChild(referenceAreaWrapper)
     referenceAreaWrapper.className = 'field insetBorder'
+    if (darkMode) referenceAreaWrapper.classList.add('darkmode')
 
     referenceArea = document.createElement('div')
     referenceAreaWrapper.appendChild(referenceArea)
@@ -269,19 +329,19 @@ function pencil(x, y) {
     }
 
     // Check if we've already placed three cells
-    if (Object.keys(cellStack).length === 3) {textBox.focus(); return}
+    if (Object.keys(cellStack).length === 3) {canvasNotFocused(); textBox.focus(); return}
 
     addToCellStack(x, y)
     
     // Fill cells with a transparent color version of the selected color
-    ctx.fillStyle = chosenColor + 50
-    ctx.fillRect(x, y, 1, 1)
-    source = cvs.toDataURL()
+    ctxImage.fillStyle = chosenColor + 50
+    ctxImage.fillRect(x, y, 1, 1)
+    source = cvsImage.toDataURL()
     renderImage()
     
     // Get a verb, person, tense, and context on the first highlighted cell
     if (Object.keys(cellStack).length === 1) randomize()
-    if (Object.keys(cellStack).length > 2) textBox.focus()
+    if (Object.keys(cellStack).length > 2) {canvasNotFocused(); textBox.focus()}
 }
 
 // Manage our cell stack object to track our three selected cells
@@ -324,9 +384,9 @@ function confirmCell() {
         addToCellHistory(x, y, color)
         removeFromCellStack(x, y)
 
-        ctx.fillStyle = color
-        ctx.fillRect(x, y, 1, 1)
-        source = cvs.toDataURL()
+        ctxImage.fillStyle = color
+        ctxImage.fillRect(x, y, 1, 1)
+        source = cvsImage.toDataURL()
         renderImage()
     })
 }
@@ -338,8 +398,8 @@ function clearCell(x, y) {
     removeFromCellHistory(x, y)
     if (Object.keys(cellStack).length === 0) {verbContext = {}; populateContextBox(); deconstructHint()}
     
-    ctx.clearRect(x, y, 1, 1)
-    source = cvs.toDataURL()
+    ctxImage.clearRect(x, y, 1, 1)
+    source = cvsImage.toDataURL()
     renderImage()
 }
 
@@ -360,22 +420,24 @@ function renderImage() {
 
 function drawCanvas() {
     context.imageSmoothingEnabled = false
-    context.drawImage(img, 0, 0, canvas.width, canvas.height)
+    context.drawImage(cvsImage, 0, 0, canvas.width, canvas.height)
+    context.drawImage(cvsSelected, 0, 0, canvas.width, canvas.height)
+    context.drawImage(cvsHighlighted, 0, 0, canvas.width, canvas.height)
 }
 
 function loadCanvas() {
     Object.keys(cellHistory).forEach(cell => {
-        ctx.fillStyle = cellHistory[cell].color
-        ctx.fillRect(cellHistory[cell].x, cellHistory[cell].y, 1, 1)
+        ctxImage.fillStyle = cellHistory[cell].color
+        ctxImage.fillRect(cellHistory[cell].x, cellHistory[cell].y, 1, 1)
     })
     Object.keys(cellStack).forEach(cell => {
-        ctx.fillStyle = cellStack[cell].color+50
-        ctx.fillRect(cellStack[cell].x, cellStack[cell].y, 1, 1)
+        ctxImage.fillStyle = cellStack[cell].color+50
+        ctxImage.fillRect(cellStack[cell].x, cellStack[cell].y, 1, 1)
     })
-    source = cvs.toDataURL()
+    source = cvsImage.toDataURL()
     renderImage()
     if (Object.keys(cellStack).length != 0) randomize()
-    if (Object.keys(cellStack).length > 2) textBox.focus()
+    if (Object.keys(cellStack).length > 2) {canvasNotFocused(); textBox.focus()}
 }
 
 // Change canvas background color
@@ -415,8 +477,8 @@ function pan(e) {
 
 // clear the canvas
 function clearCanvas() {
-    ctx.clearRect(0, 0, cvs.height, cvs.width)
-    source = cvs.toDataURL()
+    ctxImage.clearRect(0, 0, cvsImage.height, cvsImage.width)
+    source = cvsImage.toDataURL()
     renderImage()
     Object.keys(cellStack).forEach(key => {
         let x = cellStack[key].x
@@ -441,8 +503,8 @@ function scaleCanvas(e) {
 
     // Zoom in
     if (!e.ctrlKey) {
-        tarWidth = target.getBoundingClientRect().width * 1.1       // multiply the onscreen target width by 110%
-        tarHeight = target.getBoundingClientRect().height * 1.1     // multiply the onscreen target height by 110%
+        tarWidth = target.offsetWidth * 1.1       // multiply the onscreen target width by 110%
+        tarHeight = target.offsetHeight * 1.1     // multiply the onscreen target height by 110%
     }
 
     // zoom out if the control key is pressed
@@ -457,6 +519,8 @@ function scaleCanvas(e) {
     target.style.height = `${tarHeight}px`
 
     if (target === canvasWrapper) {
+        canvas.style.width = `${tarWidth}px`
+        canvas.style.height = `${tarHeight}px`
         guide.style.width = `${tarWidth}px`
         guide.style.height = `${tarHeight}px`
     }
@@ -496,7 +560,8 @@ function setDarkMode() {
 function changeLang() {
     switch(lang[0].name) {
         case 'german' : lang = [en]; break
-        case 'english' : lang = [de]; break
+        case 'english' : lang = [fr]; break
+        case 'french' : lang = [de]; break
     }
     loadLang()
     setUpContent()
@@ -505,10 +570,76 @@ function changeLang() {
 function loadLang() {
     switch(lang[0].name) {
         case 'german' : lang = [de]; break
+        case 'french' : lang = [fr]; break
         default : lang = [en]; break
     }
     if (Object.keys(cellStack).length != 0) randomize()
-    if (Object.keys(cellStack).length > 2) textBox.focus()
+    if (Object.keys(cellStack).length > 2) {canvasNotFocused(); textBox.focus()}
+}
+
+// Settings dialog window
+
+function createSettingsWindow() {
+    let e = createWindow('settingsWindow')
+
+    let contentArea = e.contentAreaKey
+
+    contentArea.insertAdjacentHTML('beforeend', `
+    <div class="setWrap">Language
+        <div class="setWrap">
+            <div>English
+                <input type="checkbox" name="EnglishCheck" id="EnglishCheck">
+            </div>
+            <div>German
+                <input type="checkbox" name="GermanCheck" id="GermanCheck">
+            </div>
+        </div>
+    </div>
+    <div class="setWrap">Dark Mode
+        <div class="setWrap">
+            <input type="checkbox" name="darkModeCheck" id="darkModeCheck">
+        </div>
+    </div>
+    <div class="setWrap">Canvas
+        <div class="setWrap">
+            <div style="padding: 20px 0px">Width
+                <div class="text insetBorder digitInput">
+                    <input type="text" name="widthInput" id="widthInput" class="text">
+                </div>
+            </div>
+            <div style="padding: 20px 0px">Height
+                <div class="text insetBorder digitInput">
+                    <input type="text" name="heightInput" id="heightInput" class="text">
+                </div>
+            </div>
+        </div>
+    </div>
+    `)
+
+    // get variables of window elements
+    var EnglishCheck = document.getElementById('EnglishCheck')
+    var GermanCheck = document.getElementById('GermanCheck')
+    var FrenchCheck = document.getElementById('FrenchCheck')
+
+    var darkModeCheck = document.getElementById('darkModeCheck')
+
+    var widthInput = document.getElementById('widthInput')
+    var heightInput = document.getElementById('heightInput')
+
+    // populate window elements with appropriate values
+    switch (lang[0].name) {
+        case 'english' : EnglishCheck.checked = true; GermanCheck.checked = false; FrenchCheck.checked = false; break
+        case 'german' : EnglishCheck.checked = false; GermanCheck.checked = true; FrenchCheck.checked = false; break
+        case 'french' : EnglishCheck.checked = false; GermanCheck.checked = false; FrenchCheck.checked = true; break
+    }
+
+    switch (darkMode) {
+        case true : darkModeCheck.checked = true; break
+        case false : darkModeCheck.checked = false; break
+    }
+
+    widthInput.value = pxls.width
+    heightInput.value = pxls.height
 }
 
 // Expand and contract the hintbox
@@ -524,13 +655,20 @@ function expand(target) {
 
 // Key and mouse functionality
 
-function hover(target) {
-    hovered.push(target)
-    if (hovered.length === 2) {
-        hovered[0].classList.toggle('hovered')
-        hovered.splice(0,1)
-    }
-    hovered[0].classList.toggle('hovered')
+function hover(x, y) {
+    ctxHighlighted.clearRect(0, 0, cvsHighlighted.width, cvsHighlighted.height)
+    hovered = {x: undefined, y: undefined}
+    ctxHighlighted.fillStyle = darkMode ? '#FFFFFF50' : '#00000050'
+    ctxHighlighted.fillRect(x, y, 1, 1)
+    hovered = {x: x, y: y}
+    source = cvsHighlighted.toDataURL()
+    renderImage()
+}
+
+function clearHover() {
+    ctxHighlighted.clearRect(0, 0, cvsHighlighted.width, cvsHighlighted.height)
+    source = cvsHighlighted.toDataURL()
+    renderImage()
 }
 
 function paletteMousedown(target) {
@@ -543,55 +681,51 @@ function paletteMousedown(target) {
 }
 
 function keyup(e) {
-    switch (e.keyCode) {
-        case 90 : if (e.ctrlKey) undo(); break;
-        case 13 : e.preventDefault(); textBox.value != "" ? confirm() : pencil(); return false;
-        case 46 : erase(); break;
-        case 37 : 
-        case 38 :
-        case 39 :
-        case 40 :
+    switch (e.key) {
+        case 'z' : if (e.ctrlKey) undo(); break;
+        case 'Enter' : e.preventDefault(); textBox.value != "" ? confirm() : pencil(hovered.x, hovered.y); return false;
+        case 'Delete' : erase(); break;
+        case 'ArrowLeft' : 
+        case 'ArrowUp' :
+        case 'ArrowRight' :
+        case 'ArrowDown' :
             e.ctrlKey ? arrowKeyPaintHandler(e) : arrowKeyPixelHandler(e);
         default : return
     }
+}
+
+function textboxKeyup (event) {
+    if (event.key === 'Enter') confirm()
 }
 
 function arrowKeyPixelHandler(event) {
     if (Object.keys(cellStack).length === 3) return
     else
     event.preventDefault()
-    let hoveredID = hovered[0].id
-    switch (event.keyCode) {
-        case 37 : if ((hoveredID/32)%1 != 0) {
-            hover(document.getElementById(parseInt(hoveredID) - 1))
-        } break
-        case 38 : if (hoveredID > 31) {
-            hover(document.getElementById(parseInt(hoveredID) - 32))
-        } break
-        case 39 : if ((hoveredID/32)%1 != 0.96875) {
-            hover(document.getElementById(parseInt(hoveredID) + 1))
-        } break
-        case 40 : if (hoveredID < 991) {
-            hover(document.getElementById(parseInt(hoveredID) + 32))
-        } break
+
+    switch (event.key) {
+        case 'ArrowUp'   : if (hovered.y > 0) hover(hovered.x, --(hovered.y)); break
+        case 'ArrowDown' : if (hovered.y < (pxls.height - 1)) hover(hovered.x, ++(hovered.y)); break
+        case 'ArrowLeft' : if (hovered.x > 0) hover(--(hovered.x), hovered.y); break
+        case 'ArrowRight': if (hovered.x < (pxls.width - 1)) hover(++(hovered.x), hovered.y); break
     }
 }
 
 function arrowKeyPaintHandler(event) {
     event.preventDefault()
-    let chosenColorID = document.querySelectorAll('.activeColor')[0].id.substring(5)
-    switch (event.keyCode) {
-        case 37 : if ((chosenColorID/8)%1 != 0) {
-            chooseColor(document.getElementById('color' + (parseInt(chosenColorID) - 1)))
+    let chosenColorID = document.querySelectorAll('.activeColor')[0].id
+    switch (event.key) {
+        case 'ArrowLeft' : if ((chosenColorID/8)%1 != 0) {
+            chooseColor(document.getElementById((parseInt(chosenColorID) - 1)))
         } break
-        case 38 : if (chosenColorID > 7) {
-            chooseColor(document.getElementById('color' + (parseInt(chosenColorID) - 8)))
+        case 'ArrowUp' : if (chosenColorID > 7) {
+            chooseColor(document.getElementById((parseInt(chosenColorID) - 8)))
         } break
-        case 39 : if ((chosenColorID/8)%1 != 0.875) {
-            chooseColor(document.getElementById('color' + (parseInt(chosenColorID) + 1)))
+        case 'ArrowRight' : if ((chosenColorID/8)%1 != 0.875) {
+            chooseColor(document.getElementById((parseInt(chosenColorID) + 1)))
         } break
-        case 40 : if (chosenColorID < 56) {
-            chooseColor(document.getElementById('color' + (parseInt(chosenColorID) + 8)))
+        case 'ArrowDown' : if (chosenColorID < 56) {
+            chooseColor(document.getElementById((parseInt(chosenColorID) + 8)))
         } break
     }
 }
@@ -600,7 +734,7 @@ function chooseColor(target) {
     if (document.querySelectorAll('.activeColor').length != 0) {
         document.querySelectorAll('.activeColor')[0].classList.toggle('activeColor')
     }
-    chosenColor = target.id
+    chosenColor = crayola[target.id]
     target.classList.toggle('activeColor')
 }
 function eyedropper() {
@@ -704,3 +838,35 @@ function deconstructHint() {
     hintcontent.innerHTML = ''
     hintcontent.style.display = 'none'
 }
+
+// debug function to get all event listeners
+
+function listAllEventListeners() {
+    const allElements = Array.prototype.slice.call(document.querySelectorAll('*'));
+    allElements.push(document);
+    allElements.push(window);
+  
+    const types = [];
+  
+    for (let ev in window) {
+      if (/^on/.test(ev)) types[types.length] = ev;
+    }
+  
+    let elements = [];
+    for (let i = 0; i < allElements.length; i++) {
+      const currentElement = allElements[i];
+      for (let j = 0; j < types.length; j++) {
+        if (typeof currentElement[types[j]] === 'function') {
+          elements.push({
+            "node": currentElement,
+            "type": types[j],
+            "func": currentElement[types[j]].toString(),
+          });
+        }
+      }
+    }
+  
+    return elements.sort(function(a,b) {
+      return a.type.localeCompare(b.type);
+    });
+  }

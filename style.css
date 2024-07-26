@@ -168,7 +168,7 @@ pre {
     display: none;
 }
 
-#textBox, #promptURLInput {
+input[type='text'] {
     position: relative;
     width: 100%;
     height: 100%;
@@ -203,26 +203,16 @@ svg {
     height: 100%;
 }
 #canvasWrapper {
-    height: 95%;
-    aspect-ratio: 1/1;
     margin: auto;
 }
 #guide {
-    height: 95%;
-    aspect-ratio: 1 / 1;
     display: grid;
     pointer-events: none;
     position: absolute;
     z-index: 1;
 }
-#guide:active {
-    pointer-events: none;
-}
 #guide div {
-    border: 1px solid black;
-}
-#guide div:hover {
-    outline: 4px solid red;
+    border: 1px solid #00000050;
 }
 #canvas {
     display: block;
@@ -238,8 +228,8 @@ svg {
 
 .window {
     position: absolute; 
-    top: 50%;
-    left: 50%;
+    top: calc(50% - 150px);
+    left: calc(50% - 150px);
     z-index: 2;
     width: 300px;
 }
@@ -268,6 +258,15 @@ svg {
 #reference {
     width: 100%;
     margin: auto;
+}
+
+.setWrap {
+    margin: 10px;
+}
+
+.digitInput {
+    width: 50px;
+    display: inline-block;
 }
 
 @media screen and (orientation: landscape) {

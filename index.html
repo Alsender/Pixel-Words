@@ -8,8 +8,7 @@
         <!-- <script type="text/javascript" src="C:\Users\agolm\Documents\javascript games\LanguageLib\german.js" charset="utf-8"></script>
         <script type="text/javascript" src="C:\Users\agolm\Documents\javascript games\LanguageLib\english.js" charset="utf-8"></script>
         <script type="text/javascript" src="C:\Users\agolm\Documents\javascript games\LanguageLib\french.js" charset="utf-8"></script> -->
-        <script type="text/javascript" src="https://alsender.github.io/LanguageLib/german.js" charset="utf-8"></script>
-        <script type="text/javascript" src="https://alsender.github.io/LanguageLib/english.js" charset="utf-8"></script>
+
 
     </head>
     <body>
@@ -199,23 +198,20 @@
                 <div class="overflow" id="canvasArea">
                     <div id="canvasWrapper">
                         <div id="guide"></div>
-                        <canvas id="canvas" class="canvas"></canvas>
+                        <canvas id="canvas" class="canvas" tabindex="1"></canvas>
                     </div>
                 </div>
             </div>
             <div class="container"></div>
-            <canvas id="cvs"></canvas>
             
         </main>
         <script type="text/javascript" src="pixelwords.js" charset="utf-8"></script>
+        <script type="text/javascript" src="https://alsender.github.io/LanguageLib/german.js" charset="utf-8"></script>
+        <script type="text/javascript" src="https://alsender.github.io/LanguageLib/english.js" charset="utf-8"></script>
+        <script type="text/javascript" src="https://alsender.github.io/LanguageLib/french.js" charset="utf-8"></script>
         <script>
+
             // get elements
-            let canvas  = document.getElementById('canvas') // big canvas
-            let context = canvas.getContext('2d')
-
-            let cvs = document.getElementById('cvs') // small hidden canvas
-            let ctx = cvs.getContext('2d')
-
             const palette = document.getElementById('palette')
             const textBox = document.getElementById('textBox')
             const personField = document.getElementById('person')
@@ -240,19 +236,29 @@
                 palette.appendChild(color)
                 color.dataset.color = crayola[i]
                 color.style.backgroundColor = crayola[i]
-                color.id = crayola[i]
-                color.onclick = function() {paletteMousedown(event.target)}
+                color.id = i
             }
+            palette.onclick = function() {paletteMousedown(event.target)}
             loadVariablesFromLocalStorage()
             setUpCanvas()
             setUpContent()
             loadCanvas()
             loadLang()
 
+            canvas.addEventListener('mousemove', handleCanvasMousemove)
             canvas.addEventListener('mousedown', handleCanvasMousedown)
+            textBox.addEventListener('focus', function() {
+                canvas.style.pointerEvents = 'none'
+                canvas.tabIndex = -1
+            })
+            textBox.addEventListener('blur', function() {
+                canvas.style.pointerEvents = 'auto'
+                canvas.tabIndex = 0
+            })
             //hover(document.getElementById('0'))
-            chooseColor(document.getElementById(crayola[0]))
-            document.addEventListener('keyup', function() {keyup(event)})
+            chooseColor(document.getElementById('0'))
+            document.addEventListener('keyup', keyup)
+            //textBox.onfocus = textboxFocused
             hintBox.addEventListener('click', function() {expand(event.target)})
             document.onvisibilitychange = () => {
                 if (document.visibilityState === 'hidden') {

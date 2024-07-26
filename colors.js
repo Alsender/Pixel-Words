@@ -56,11 +56,11 @@ crayola = [
     '#D27D46' /**Raw Sienna */,
     '#FA9D5A' /**Tan */,
     '#FFCBA4' /**Peach */,
-    '#FDD5B1'  /**Apricot */,
+    '#FDD5B1' /**Apricot */,
     '#E6BE8A' /**Gold (II) */,
     '#C9C0BB' /**Silver */,
     '#000000' /**Black */,
     '#8B8680' /**Gray */,
     '#D9D6CF' /**Timberwolf */,
-    '#FFFFFF'	/**White */,
+    '#FFFFFF' /**White */,
 ]
